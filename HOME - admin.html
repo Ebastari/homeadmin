@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Manajemen Integrated Nursery - Modern</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===================================== */
+        /*           0. Root Variables           */
+        /* ===================================== */
+        :root {
+            --primary-green: #4CAF50; /* Base green */
+            --dark-green: #388E3C; /* Darker green */
+            --light-green: #E8F5E9; /* Lighter green */
+            --text-dark: #333333;
+            --text-light: #666666;
+            --background-light: #F8F8F8;
+            --card-background: #FFFFFF;
+            --border-color: #EEEEEE;
+            --shadow-light: rgba(0, 0, 0, 0.08); /* Sedikit lebih gelap */
+            --shadow-medium: rgba(0, 0, 0, 0.15); /* Lebih jelas */
+            --accent-green: #66BB6A; /* Green aksen untuk gradien */
+        }
+
+        /* ===================================== */
+        /*             1. General Styles         */
+        /* ===================================== */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary-green) 0%, #38A057 100%);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            background-color: var(--background-light);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 40px var(--shadow-medium);
+            position: relative;
+            min-height: 90vh;
+        }
+
+        /* ===================================== */
+        /*             2. Header Section         */
+        /* ===================================== */
+        .header-bg {
+            background: linear-gradient(100deg, var(--dark-green), var(--accent-green));
+            color: white;
+            padding: 25px 20px 80px 20px;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .header-bg:active, .header-bg:hover {
+            opacity: 0.95;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .location-weather {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .location-weather span {
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            opacity: 0.9;
+        }
+
+        .location-weather i {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .profile-photo {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .greeting h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .greeting p {
+            margin: 8px 0 0;
+            font-size: 1em;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* ===================================== */
+        /*             3. Main Content           */
+        /* ===================================== */
+        .main-content-scroll {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            position: relative;
+            z-index: 2;
+            margin-top: -60px;
+            background-color: transparent;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-green) var(--background-light);
+        }
+
+        .main-content-scroll::-webkit-scrollbar { width: 8px; }
+        .main-content-scroll::-webkit-scrollbar-track { background: var(--background-light); border-radius: 10px; }
+        .main-content-scroll::-webkit-scrollbar-thumb { background-color: var(--primary-green); border-radius: 10px; border: 2px solid var(--background-light); }
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        /* ===================================== */
+        /*             4. Card Styles            */
+        /* ===================================== */
+        .plant-card, .points-card {
+            background-color: var(--card-background);
+            border-radius: 18px;
+            box-shadow: 0 8px 20px var(--shadow-light);
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
+        }
+        .plant-card:hover, .points-card:hover {
+            transform: translateY(-7px) scale(1.01);
+            box-shadow: 0 12px 30px var(--shadow-medium);
+        }
+        .plant-card:active, .points-card:active {
+            transform: translateY(-2px) scale(0.99);
+        }
+
+        .plant-cards-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            margin-top: 10px;
+        }
+
+        .plant-card {
+            padding: 20px;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .plant-card .icon {
+            font-size: 2.5em;
+            color: white;
+            background: linear-gradient(45deg, #8BC34A, var(--primary-green));
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .plant-card-info h3 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .plant-card-info p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+        .plant-card .arrow {
+            margin-left: auto;
+            color: var(--text-light);
+            font-size: 1.1em;
+            opacity: 0.7;
+        }
+
+        .points-card {
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .points-card .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .points-card .level-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .points-card .level-info span {
+            font-weight: 500;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+        }
+
+        .points-card .level-icon {
+            font-size: 1.2em;
+            line-height: 1;
+            margin-left: 5px;
+        }
+
+        .points-card .time-info {
+            text-align: right;
+            font-size: 0.9em;
+        }
+        .points-card .time-info #liveTime {
+            font-weight: 600;
+            color: #2E7D32;
+            font-size: 1em;
+        }
+        .points-card .time-info small {
+            color: var(--text-light);
+            font-size: 0.8em;
+        }
+
+        .points-card #levelDesc {
+            color: #388E3C;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .points-card .details-btn {
+            background-color: var(--light-green);
+            color: var(--dark-green);
+            padding: 8px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            align-self: flex-end;
+            margin-top: 12px;
+        }
+        .points-card .details-btn:hover {
+            background-color: var(--primary-green);
+            color: white;
+            transform: scale(1.02);
+        }
+        .points-card .details-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ===================================== */
+        /*             5. Features Grid          */
+        /* ===================================== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .feature-item {
+            background-color: var(--card-background);
+            border-radius: 18px;
+            padding: 18px 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            position: relative;
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 20px var(--shadow-medium);
+        }
+        .feature-item:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .feature-item .icon {
+            font-size: 2.3em;
+            color: var(--dark-green);
+            margin-bottom: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .feature-item span {
+            font-size: 0.85em;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #FF5722;
+            color: white;
+            font-size: 0.6em;
+            padding: 4px 7px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        .badge.beta {
+            background-color: #8BC34A;
+        }
+
+        /* ===================================== */
+        /*             6. Bottom Navigation      */
+        /* ===================================== */
+        .bottom-nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.75em;
+            padding: 8px 5px;
+            flex: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+        .nav-item:hover {
+            color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+
+        .nav-item i {
+            font-size: 1.6em;
+            margin-bottom: 5px;
+            transition: transform 0.2s ease-out;
+        }
+
+        .nav-item.active i {
+            transform: scale(1.2) translateY(-2px);
+        }
+
+        /* ===================================== */
+        /*              7. Modals                */
+        /* ===================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .close-button {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            display: inline-block;
+            background: linear-gradient(90deg,#1e8b4b,#0b6b3a);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .btn-save {
+            background: linear-gradient(90deg,#0b6b3a,#1e8b4b);
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .file-input input[type=file] {
+            display: none;
+        }
+
+        /* ===================================== */
+        /*             8. Animations             */
+        /* ===================================== */
+        @keyframes sparkle {
+            0% { transform: scale(1); opacity: 0.9; box-shadow:0 0 10px 3px rgba(76,175,80,0.4); }
+            50% { transform: scale(1.3); opacity: 1; box-shadow:0 0 15px 5px rgba(129,199,132,0.6); }
+            100% { transform: scale(1); opacity: 0.9; box-shadow:0 0 10px 3px rgba(76,175,80,0.4); }
+        }
+
+        /* ===================================== */
+        /*           9. Responsive Adjustments   */
+        /* ===================================== */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .app-container { margin: 0; border-radius: 0; min-height: 100vh; }
+            .header-bg, .bottom-nav { border-radius: 0; }
+            .header-bg { padding: 20px 15px 70px 15px; }
+            .greeting h1 { font-size: 1.6em; }
+            .greeting p { font-size: 0.9em; }
+            .main-content-scroll { padding: 0 15px 15px 15px; margin-top: -50px; }
+            .plant-card { padding: 15px; gap: 10px; max-width: none; }
+            .plant-card .icon { width: 50px; height: 50px; font-size: 2.2em; }
+            .plant-card-info h3 { font-size: 1.1em; }
+            .plant-card-info p { font-size: 0.8em; }
+            .points-card { padding: 15px; }
+            .points-card .details-btn { padding: 8px 15px; font-size: 0.8em; }
+            .section-title { font-size: 1.2em; margin-bottom: 15px; }
+            .features-grid { gap: 10px; }
+            .feature-item { padding: 15px 8px; border-radius: 15px; }
+            .feature-item .icon { font-size: 2em; margin-bottom: 8px; }
+            .feature-item span { font-size: 0.8em; }
+            .bottom-nav { padding: 8px 0; }
+            .nav-item i { font-size: 1.4em; }
+            .nav-item span { font-size: 0.65em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+
+    <!-- Header Section -->
+    <div class="header-bg"> <!-- Mengubah dari <a> menjadi <div> -->
+        <div class="header-top">
+            <div class="location-weather">
+                <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span id="currentLocation">Lokasi Anda</span></span>
+                <!-- Link perkiraan cuaca dipindahkan ke sini -->
+                <a href="https://www.msn.com/id-id/cuaca/prakiraan/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsImMiOiJJbmRvbmVzaWEiLCJpIjoiSUQiLCJ0IjoxMDIsImciOiJpZC1pZCIsIngiOiIxMTUuMTQ0IiwieSI6Ii0yLjkzMzYifQ%3D%3D&weadegreetype=C&cvid=04f8efd46fc4e61c726ce185e11fa39" aria-label="Lihat perkiraan cuaca di Rantau, Kalimantan Selatan" style="color: inherit; text-decoration: none;">
+                    <span><i class="fas fa-sun" aria-hidden="true"></i>Perkiraan Cuaca Hari Ini</span>
+                </a>
+            </div>
+        </div>
+        <div class="greeting">
+            <div class="profile-header">
+                <div class="profile-photo" id="avatarContainer" role="button" tabindex="0" aria-label="Edit profil pengguna">
+                    <img id="avatarImage" src="https://via.placeholder.com/80/28a745/ffffff?text=NP" alt="Foto Profil Pengguna">
+                </div>
+                <div class="profile-info">
+                    <h2 id="userNameDisplay">Nama Pengguna</h2>
+                </div>
+            </div>
+            <h1>Halo, <span id="greetingName">Sahabat Montana</span>!</h1>
+            <p>Bayangkan jika kamu memiliki asisten analisis data canggih yang mampu melaporkan kondisi tanaman secara real-time, melakukan pendataan bibit otomatis, mendeteksi kesehatan daun, mengukur tinggi tanaman secara otomatis, dan bahkan menyediakan laporan melalui chatbot AI — semuanya terintegrasi dalam satu aplikasi: “Montana AI: Artificial Intelligence for Smart Land Reclamation.”</p>
+        </div>
+    </div>
+        </a>
+
+        <!-- Modal Edit Profil -->
+        <div id="editProfileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="editProfileModalTitle">
+            <div class="modal-content">
+                <span class="close-button" id="closeEditModal" role="button" tabindex="0" aria-label="Tutup dialog edit profil">&times;</span>
+                <h2 id="editProfileModalTitle">Edit Profil Pengguna</h2>
+                <form id="profileForm">
+                    <label for="profileName">Nama Lengkap</label>
+                    <input type="text" id="profileName" placeholder="Nama Anda" aria-label="Input nama lengkap">
+
+                    <label for="profilePhotoInput">Foto Profil</label>
+                    <div class="file-input">
+                        <label class="btn-upload" for="profilePhotoInput">Pilih Foto</label>
+                        <input type="file" id="profilePhotoInput" accept="image/*" aria-label="Pilih foto profil dari perangkat Anda">
+                    </div>
+
+                    <div class="actions">
+                        <button type="button" class="btn-save" id="saveProfile">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content-scroll">
+            <div class="points-card">
+                <h3 style="margin:0; font-weight:700; color:#2E7D32;">Status Pertumbuhan</h3>
+                <hr style="border:none; border-top:1px solid #E0E0E0; margin:8px 0;">
+
+                <div style="width:100%;">
+                    <p style="margin:6px 0;"><strong>Tingkatan Saat Ini:</strong> <span id="currentLevel">Semai</span></p>
+                    <p style="margin:6px 0;"><strong>Waktu Aktif:</strong> <span id="liveTime">0h 0j 0m 0d</span></p>
+
+                    <!-- Garis level -->
+                    <div style="margin-top:18px;">
+                        <div style="height:6px; background:#E0E0E0; border-radius:3px; position:relative;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress pertumbuhan tanaman">
+                            <div id="levelMarker"
+                                 style="position:absolute; top:-4px; width:14px; height:14px; border-radius:50%;
+                                        background:radial-gradient(circle, #66BB6A 0%, #43A047 60%, transparent 70%);
+                                        box-shadow:0 0 10px 3px rgba(76, 175, 80, 0.4);
+                                        animation:sparkle 1.2s infinite ease-in-out;">
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.8em; color:#555;">
+                            <span>Semai</span><span>Pancang</span><span>Tiang</span><span>Pohon</span><span>Rimba</span>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="https://ebastari.github.io/Poin/Poin.html" class="details-btn" style="align-self:flex-end; margin-top:12px;">
+                    Selengkapnya ➜
+                </a>
+            </div>
+
+            <h2 class="section-title">Menu Utama</h2>
+            <div class="features-grid">
+
+                <a href="https://www.arcgis.com/sharing/rest/content/items/e422f795c4774c65af35b034f2255894/data" class="feature-item" aria-label="Download data realisasi penanaman">
+                    <span class="icon"><i class="fas fa-cloud-download-alt" aria-hidden="true"></i></span>
+                    <span>Download Realisasi Penanaman...</span>
+                </a>
+                <a href="https://www.arcgis.com/sharing/rest/content/items/5e253c50a5364155a37390eeac2cc819/data" class="feature-item" aria-label="Download data IPPKH">
+                    <span class="icon"><i class="fas fa-file-download" aria-hidden="true"></i></span>
+                    <span>Download Data IPPKH</span>
+                </a>
+                <a href="https://lookerstudio.google.com/s/oDcbCRPbvm0" class="feature-item" aria-label="Lihat laporan bibit">
+                    <span class="icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
+                    <span>Laporan Bibit</span>
+                </a>
+
+                <a href="https://www.msn.com/id-id/cuaca/peta/radar/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsInIyIjoiVGFwaW4iLCJjIjoiSW5kb25lc2lhIiwiaSI6IklEIiwidCI6MTAyLCJnIjoiaWQtaWQiLCJ4IjoiMTE1LjA4OSIsInk6Ii0yLjk0ODkifQ%3D%3D&weadegreetype=C&zoom=13&rcmode=1" class="feature-item" aria-label="Lihat perkiraan cuaca">
+                    <span class="icon"><i class="fas fa-cloud-sun-rain" aria-hidden="true"></i></span>
+                    <span>Perkiraan Cuaca</span>
+                </a>
+                <a href="https://earth.google.com/earth/d/1d7_8J8ftqvA8qQ62EL41w5IeZ79UPipW?usp=sharing" class="feature-item" aria-label="Lihat rencana penanaman 2025 di Google Earth">
+                    <span class="icon"><i class="fas fa-globe" aria-hidden="true"></i></span>
+                    <span>Rencana Penanaman 2025</span>
+                </a>
+                <a href="https://drive.google.com/file/d/177quXwlMkQusQRSbZboRrNnFSqwNaZhw/view?usp=sharing" class="feature-item" aria-label="Lihat dokumen RR">
+                    <span class="icon"><i class="fas fa-book-open" aria-hidden="true"></i></span>
+                    <span>Dokumen RR</span>
+                </a>
+
+                <a href="https://earth.google.com/earth/d/15MlvXHfZ5jiCw2DftfL-p6dF7Mmn7Yck?usp=sharing" class="feature-item" aria-label="Lihat realisasi potting 2025 di Google Earth">
+                    <span class="icon"><i class="fas fa-seedling" aria-hidden="true"></i></span>
+                    <span>REALISASI POTTING 2025</span>
+                </a>
+                <a href="https://www.appsheet.com/start/1a40ac1b-9884-4c52-8891-7df37ba20d57" class="feature-item" aria-label="Lihat berita acara realisasi">
+                    <span class="icon"><i class="fas fa-newspaper" aria-hidden="true"></i></span>
+                    <span>BERITA ACARA REALISASI</span>
+                </a>
+                <a href="https://www.appsheet.com/start/f912f118-c330-4435-b1f2-2d8834992211" class="feature-item" aria-label="Lihat MOM (Minutes of Meeting)">
+                    <span class="icon"><i class="fas fa-handshake" aria-hidden="true"></i></span>
+                    <span>MOM</span>
+                </a>
+
+                <a href="https://www.appsheet.com/start/c686e2ea-ef8d-47bd-9318-80d81163c0c3" class="feature-item" aria-label="Manajemen Pestisida">
+                    <span class="icon"><i class="fas fa-spray-can" aria-hidden="true"></i></span>
+                    <span>PESTISIDA</span>
+                </a>
+                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item" aria-label="Lihat logbook bibit">
+                    <span class="icon"><i class="fas fa-book" aria-hidden="true"></i></span>
+                    <span>LOGBOOK BIBIT</span>
+                </a>
+                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item" aria-label="Lihat logbook pestisida">
+                    <span class="icon"><i class="fas fa-book-reader" aria-hidden="true"></i></span>
+                    <span>LOGBOOK PESTISIDA</span>
+                </a>
+
+                <a href="https://ebastari.github.io/camerav02/V02.html" class="feature-item" aria-label="Buka aplikasi Montana V2">
+                    <span class="icon"><i class="fas fa-camera" aria-hidden="true"></i></span>
+                    <span>MONTANA V2</span>
+                </a>
+                <a href="https://ebastari.github.io/Kesehatan-Daun-AI/Kesehatan%20Daun%20AI.html" class="feature-item" aria-label="Lakukan analisis kesehatan daun dengan AI">
+                    <span class="icon"><i class="fas fa-heartbeat" aria-hidden="true"></i></span>
+                    <span>Analisis Kesehatan Daun</span>
+                </a>
+                <a href="https://ebastari.github.io/MontanaAI/Montana%20AI%20Sederhana.html" class="feature-item" aria-label="Buka chatbot Montana AI">
+                    <span class="icon"><i class="fas fa-headset" aria-hidden="true"></i></span>
+                    <span>Chat Montana AI</span>
+                </a>
+
+                <a href="https://ebastari.github.io/Tinggi/Tinggi%20Fix.Html" class="feature-item" aria-label="Gunakan pengukur tinggi tanaman">
+                    <span class="icon"><i class="fas fa-arrows-alt-v" aria-hidden="true"></i></span>
+                    <span>Pengukur Tinggi</span></a>
+                <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOMQ7CMBAE_7K1X-AWUSAUGhANpjjii2SR2BF2gMjy37lAEHVEeXOa3c24O37sE9VX6FP-XVseoRFNb3iOPBtpgFXy6hdZAGeyo-8BKIHkyKChn9dUTR-i8yNZ_dSs4yz65xvFtippEiZg1eU-SgFlBUeiGRJeW32tFKUVYE-ohsj3KkOUD4savnz15WwUriQ21kcsLJnTIJmABAAA=&view=Montana" class="feature-item" aria-label="Akses aplikasi My Maps Appsheet">
+                    <span class="icon"><i class="fas fa-globe" aria-hidden="true"></i></span>
+                    <span>My Maps Appsheet</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="pages/home.html" class="nav-item active" aria-label="Beranda">
+                <i class="fas fa-home" aria-hidden="true"></i>
+                <span>Beranda</span>
+            </a>
+            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOMQ7CMBAE_7K1X-ASRIEQNCAaTOHEZ8kisaPYASLLf-cSQNQR5c1pdjfj7uhxTLq-QV7y79rRCImscBo7UpAK6-BTHxoFoXDQ7RuuXOWSQkG5iq-cKELmBa78o1fAGfLJWUf9FDRpHPCR-D0pDGYBRaAdkq4amneyUAozG-ohkjnziKXlces3z057sw-G86xuIpUXf0AzE1YBAAA=&view=Bibit" class="nav-item" aria-label="Lihat informasi bibit">
+                <i class="fas fa-seedling" aria-hidden="true"></i>
+                <span>Bibit</span>
+            </a>
+            <a href="https://ebastari.github.io/mapsmontana/mymaps.html" class="nav-item" aria-label="Akses peta Montana">
+                <i class="fas fa-leaf" aria-hidden="true"></i>
+                <span>Montana</span>
+            </a>
+            <a href="https://ebastari.github.io/notifikasi/notif.html" class="nav-item" aria-label="Lihat notifikasi">
+                <i class="fas fa-bell" aria-hidden="true"></i>
+                <span>Notifikasi</span>
+            </a>
+            <a href="https://ebastari.github.io/Profil/profil2" class="nav-item" aria-label="Lihat profil pengguna">
+                <i class="fas fa-user" aria-hidden="true"></i>
+                <span>Profil</span>
+            </a>
+            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOywrCMBRE_2XW-YLsRIoUHwsVN8ZFbG4h2CalSdUS8u8mVnFdXN5zOTMTcNf0OHhZ3cDP4XetaQRHEDiOHQlwgaU1vreNABPYyXaCq8Wm2JcCEfHCvrYnBx7myPyfZgatyHhda-pzUvZSwsdK7-wkMBmIDO3g5bWh99RkxJhYbavBkTqlGbPrXWmKZyeN2lqVAmvZOIovFtYuNVsBAAA=&view=GALERI" class="nav-item" aria-label="Lihat galeri foto">
+                <i class="fas fa-camera" aria-hidden="true"></i>
+                <span>GALERI</span>
+            </a>
+        </div>
+    </div>
+<script>
+    // ---- PROFIL LOKAL UNTUK HEADER ----
+    const avatarContainer = document.getElementById("avatarContainer");
+    const avatarImage = document.getElementById("avatarImage");
+    const userNameDisplay = document.getElementById("userNameDisplay");
+    const greetingName = document.getElementById("greetingName");
+    const editProfileModal = document.getElementById("editProfileModal");
+    const closeEditModal = document.getElementById("closeEditModal");
+    const profileNameInput = document.getElementById("profileName");
+    const profilePhotoInput = document.getElementById("profilePhotoInput");
+    const saveProfileBtn = document.getElementById("saveProfile");
+
+    const PROFILE_KEY = "montana_profile_v1";
+
+    // Load profile data
+    function loadProfile() {
+      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
+      if (data.name) {
+        userNameDisplay.textContent = data.name;
+        greetingName.textContent = data.name.split(" ")[0];
+      }
+      if (data.photo) avatarImage.src = data.photo;
+    }
+
+    // Save profile data
+    function saveProfile() {
+      const name = profileNameInput.value.trim() || "Sahabat Montana";
+      const photo = avatarImage.src;
+      const data = { name, photo };
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+      loadProfile();
+      editProfileModal.style.display = "none";
+    }
+
+    // Convert image to Base64 and save
+    profilePhotoInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatarImage.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Show modal when profile photo clicked
+    avatarContainer.addEventListener("click", () => {
+      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
+      profileNameInput.value = data.name || "";
+      editProfileModal.style.display = "flex";
+    });
+
+    // Close modal
+    closeEditModal.addEventListener("click", () => {
+      editProfileModal.style.display = "none";
+    });
+
+    // Save
+    saveProfileBtn.addEventListener("click", saveProfile);
+
+    // Load when page loads
+    document.addEventListener("DOMContentLoaded", loadProfile);
+
+    // Elemen yang digunakan
+    const levelDisplay = document.getElementById("currentLevel");
+    const timeDisplay = document.getElementById("liveTime");
+    const levelMarker = document.getElementById("levelMarker");
+    const currentLocationSpan = document.getElementById("currentLocation");
+
+    // Ambil waktu aktif sebelumnya (jika ada)
+    let totalSeconds = parseInt(localStorage.getItem("activeSeconds")) || 0;
+
+    // Fungsi untuk mendapatkan lokasi pengguna
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          currentLocationSpan.textContent = ` (Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)})`;
+        }, error => {
+          console.error("Error getting location: ", error);
+          currentLocationSpan.textContent = "Lokasi tidak tersedia";
+        });
+      } else {
+        currentLocationSpan.textContent = "Geolocation tidak didukung";
+      }
+    }
+
+    // Jalankan fungsi lokasi saat halaman dimuat
+    getCurrentLocation();
+
+    // Jalankan setiap detik
+    setInterval(() => {
+      totalSeconds++;
+      localStorage.setItem("activeSeconds", totalSeconds);
+
+      // Hitung waktu aktif
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      timeDisplay.textContent = `${days}h ${hours}j ${minutes}m ${seconds}d`;
+
+      // Tentukan posisi level berdasarkan waktu aktif
+      const minutesActive = totalSeconds / 60;
+      let level = "Semai";
+      let positionPercent = 0;
+
+      if (minutesActive >= 60) {
+        level = "Rimba";
+        positionPercent = 100;
+      } else if (minutesActive >= 30) {
+        level = "Pohon";
+        positionPercent = 75;
+      } else if (minutesActive >= 15) {
+        level = "Tiang";
+        positionPercent = 50;
+      } else if (minutesActive >= 5) {
+        level = "Pancang";
+        positionPercent = 25;
+      } else {
+        level = "Semai";
+        positionPercent = 0;
+      }
+
+      // Update tampilan di dashboard
+      levelDisplay.textContent = level;
+      levelMarker.style.left = `calc(${positionPercent}% - 7px)`; // agar titik hijau tetap di tengah
+    }, 1000);
+</script>
+</body>
+</html>
