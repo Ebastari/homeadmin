@@ -1,847 +1,772 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Manajemen Integrated Nursery - Modern</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* ===================================== */
-        /*           0. Root Variables           */
-        /* ===================================== */
-        :root {
-            --primary-green: #4CAF50; /* Base green */
-            --dark-green: #388E3C; /* Darker green */
-            --light-green: #E8F5E9; /* Lighter green */
-            --text-dark: #333333;
-            --text-light: #666666;
-            --background-light: #F8F8F8;
-            --card-background: #FFFFFF;
-            --border-color: #EEEEEE;
-            --shadow-light: rgba(0, 0, 0, 0.08); /* Sedikit lebih gelap */
-            --shadow-medium: rgba(0, 0, 0, 0.15); /* Lebih jelas */
-            --accent-green: #66BB6A; /* Green aksen untuk gradien */
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Montana AI — Chat Analytics (Mobile)</title>
 
-        /* ===================================== */
-        /*             1. General Styles         */
-        /* ===================================== */
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, var(--primary-green) 0%, #38A057 100%);
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        .app-container {
-            background-color: var(--background-light);
-            width: 100%;
-            max-width: 420px;
-            border-radius: 28px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 15px 40px var(--shadow-medium);
-            position: relative;
-            min-height: 90vh;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b141a; --panel:#0f1720; --accent:#0f9d80; --card:#111821; --muted:#9aa6ad; --text:#e9edf0;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+  .frame{height:100vh;display:flex;align-items:center;justify-content:center;padding:10px}
+  .phone {
+    width:100%; max-width:460px; height:94vh;
+    background:linear-gradient(180deg,var(--panel),#071014);
+    border-radius:12px; box-shadow:0 20px 50px rgba(0,0,0,0.6);
+    overflow:hidden; display:flex; flex-direction:column;
+    border:1px solid rgba(255,255,255,0.02);
+  }
 
-        /* ===================================== */
-        /*             2. Header Section         */
-        /* ===================================== */
-        .header-bg {
-            background: linear-gradient(100deg, var(--dark-green), var(--accent-green));
-            color: white;
-            padding: 25px 20px 80px 20px;
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            text-decoration: none;
-            display: block;
-            transition: opacity 0.3s ease;
-        }
-        .header-bg:active, .header-bg:hover {
-            opacity: 0.95;
-        }
+  /* Header */
+  .header{display:flex;align-items:center;gap:12px;padding:12px 14px;background:transparent}
+  .avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.04)}
+  .meta{flex:1}
+  .meta .title{font-weight:600;font-size:15px}
+  .meta .sub{font-size:12px;color:var(--muted)}
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
+  /* Banner */
+  .banner{padding:8px 14px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.02)}
 
-        .location-weather {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+  /* Chat area */
+  .chat {flex:1;padding:12px;overflow:auto;background:linear-gradient(180deg,#071014,#071018);display:flex;flex-direction:column;gap:10px}
+  .msg-row{display:flex;flex-direction:column;max-width:86%}
+  .msg-row.user{align-self:flex-end;align-items:flex-end}
+  .msg-row.bot{align-self:flex-start;align-items:flex-start}
+  .bubble{
+    padding:10px 12px;border-radius:12px;line-height:1.45;font-size:14px;background:var(--card);color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,0.4);
+    white-space:pre-wrap; word-break:break-word;
+  }
+  .bubble.user{background:#dfeee7;color:#0b1411}
+  .ts{font-size:11px;color:var(--muted);margin-top:6px}
 
-        .location-weather span {
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            opacity: 0.9;
-        }
+  /* Composer */
+  .composer{display:flex;gap:8px;padding:10px;background:linear-gradient(180deg,#071018,#061014);border-top:1px solid rgba(255,255,255,0.02)}
+  .input{flex:1;display:flex;align-items:center}
+  .input textarea{width:100%;min-height:44px;max-height:120px;padding:10px;border-radius:999px;border:none;background:#0e2624;color:var(--text);font-size:14px;resize:none;outline:none}
+  .send{width:46px;height:46px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
 
-        .location-weather i {
-            margin-right: 6px;
-            font-size: 1.1em;
-        }
+  /* Shortcuts menu */
+  .shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;padding:0 12px 8px 12px}
+  .sc-btn{padding:8px 10px;border-radius:10px;background:#0b2a28;color:var(--text);font-size:13px;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
+  /* Modal for charts/tables */
+  .modal {
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:60;padding:16px;
+  }
+  .modal.show{display:flex}
+  .modal-card{width:100%;max-width:900px;background:#071018;border-radius:12px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.02);max-height:90vh;overflow:auto}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .modal-close{background:#122a27;color:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
 
-        .profile-photo {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid rgba(255,255,255,0.8);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
+  table{width:100%;border-collapse:collapse;font-size:13px;color:var(--text)}
+  thead th{position:sticky;top:0;background:#071018;padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  tbody td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .small{font-size:12px;color:var(--muted)}
 
-        .profile-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .profile-info h2 {
-            margin: 0;
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .greeting h1 {
-            margin: 0;
-            font-size: 1.8em;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .greeting p {
-            margin: 8px 0 0;
-            font-size: 1em;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        /* ===================================== */
-        /*             3. Main Content           */
-        /* ===================================== */
-        .main-content-scroll {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 0 20px 20px 20px;
-            position: relative;
-            z-index: 2;
-            margin-top: -60px;
-            background-color: transparent;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-green) var(--background-light);
-        }
-
-        .main-content-scroll::-webkit-scrollbar { width: 8px; }
-        .main-content-scroll::-webkit-scrollbar-track { background: var(--background-light); border-radius: 10px; }
-        .main-content-scroll::-webkit-scrollbar-thumb { background-color: var(--primary-green); border-radius: 10px; border: 2px solid var(--background-light); }
-
-        .section-title {
-            font-size: 1.4em;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-        }
-
-        /* ===================================== */
-        /*             4. Card Styles            */
-        /* ===================================== */
-        .plant-card, .points-card {
-            background-color: var(--card-background);
-            border-radius: 18px;
-            box-shadow: 0 8px 20px var(--shadow-light);
-            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
-        }
-        .plant-card:hover, .points-card:hover {
-            transform: translateY(-7px) scale(1.01);
-            box-shadow: 0 12px 30px var(--shadow-medium);
-        }
-        .plant-card:active, .points-card:active {
-            transform: translateY(-2px) scale(0.99);
-        }
-
-        .plant-cards-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-            margin-top: 10px;
-        }
-
-        .plant-card {
-            padding: 20px;
-            width: 100%;
-            max-width: 320px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-            color: var(--text-dark);
-        }
-
-        .plant-card .icon {
-            font-size: 2.5em;
-            color: white;
-            background: linear-gradient(45deg, #8BC34A, var(--primary-green));
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .plant-card-info h3 {
-            margin: 0;
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-        .plant-card-info p {
-            margin: 5px 0 0;
-            font-size: 0.9em;
-            color: var(--text-light);
-        }
-        .plant-card .arrow {
-            margin-left: auto;
-            color: var(--text-light);
-            font-size: 1.1em;
-            opacity: 0.7;
-        }
-
-        .points-card {
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .points-card .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .points-card .level-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .points-card .level-info span {
-            font-weight: 500;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-        }
-
-        .points-card .level-icon {
-            font-size: 1.2em;
-            line-height: 1;
-            margin-left: 5px;
-        }
-
-        .points-card .time-info {
-            text-align: right;
-            font-size: 0.9em;
-        }
-        .points-card .time-info #liveTime {
-            font-weight: 600;
-            color: #2E7D32;
-            font-size: 1em;
-        }
-        .points-card .time-info small {
-            color: var(--text-light);
-            font-size: 0.8em;
-        }
-
-        .points-card #levelDesc {
-            color: #388E3C;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .points-card .details-btn {
-            background-color: var(--light-green);
-            color: var(--dark-green);
-            padding: 8px 15px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 0.85em;
-            font-weight: 600;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-            align-self: flex-end;
-            margin-top: 12px;
-        }
-        .points-card .details-btn:hover {
-            background-color: var(--primary-green);
-            color: white;
-            transform: scale(1.02);
-        }
-        .points-card .details-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* ===================================== */
-        /*             5. Features Grid          */
-        /* ===================================== */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .feature-item {
-            background-color: var(--card-background);
-            border-radius: 18px;
-            padding: 18px 10px;
-            text-align: center;
-            box-shadow: 0 4px 10px var(--shadow-light);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-dark);
-            position: relative;
-            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
-        }
-        .feature-item:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 8px 20px var(--shadow-medium);
-        }
-        .feature-item:active {
-            transform: translateY(-1px) scale(0.98);
-        }
-
-        .feature-item .icon {
-            font-size: 2.3em;
-            color: var(--dark-green);
-            margin-bottom: 10px;
-            transition: color 0.2s ease;
-        }
-
-        .feature-item span {
-            font-size: 0.85em;
-            font-weight: 500;
-            line-height: 1.3;
-        }
-
-        .badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #FF5722;
-            color: white;
-            font-size: 0.6em;
-            padding: 4px 7px;
-            border-radius: 8px;
-            font-weight: 700;
-        }
-        .badge.beta {
-            background-color: #8BC34A;
-        }
-
-        /* ===================================== */
-        /*             6. Bottom Navigation      */
-        /* ===================================== */
-        .bottom-nav {
-            background-color: rgba(255, 255, 255, 0.9);
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
-            padding: 12px 0;
-            display: flex;
-            justify-content: space-around;
-            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            bottom: 0;
-            width: 100%;
-            border-top-left-radius: 28px;
-            border-top-right-radius: 28px;
-            z-index: 10;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-light);
-            font-size: 0.75em;
-            padding: 8px 5px;
-            flex: 1;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-item.active {
-            color: var(--primary-green);
-            font-weight: 600;
-        }
-        .nav-item:hover {
-            color: var(--primary-green);
-            transform: translateY(-2px);
-        }
-
-        .nav-item i {
-            font-size: 1.6em;
-            margin-bottom: 5px;
-            transition: transform 0.2s ease-out;
-        }
-
-        .nav-item.active i {
-            transform: scale(1.2) translateY(-2px);
-        }
-
-        /* ===================================== */
-        /*              7. Modals                */
-        /* ===================================== */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .close-button {
-            position: absolute;
-            right: 20px;
-            top: 10px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .btn-upload {
-            display: inline-block;
-            background: linear-gradient(90deg,#1e8b4b,#0b6b3a);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .btn-save {
-            background: linear-gradient(90deg,#0b6b3a,#1e8b4b);
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .file-input input[type=file] {
-            display: none;
-        }
-
-        /* ===================================== */
-        /*             8. Animations             */
-        /* ===================================== */
-        @keyframes sparkle {
-            0% { transform: scale(1); opacity: 0.9; box-shadow:0 0 10px 3px rgba(76,175,80,0.4); }
-            50% { transform: scale(1.3); opacity: 1; box-shadow:0 0 15px 5px rgba(129,199,132,0.6); }
-            100% { transform: scale(1); opacity: 0.9; box-shadow:0 0 10px 3px rgba(76,175,80,0.4); }
-        }
-
-        /* ===================================== */
-        /*           9. Responsive Adjustments   */
-        /* ===================================== */
-        @media (max-width: 480px) {
-            body { padding: 10px; }
-            .app-container { margin: 0; border-radius: 0; min-height: 100vh; }
-            .header-bg, .bottom-nav { border-radius: 0; }
-            .header-bg { padding: 20px 15px 70px 15px; }
-            .greeting h1 { font-size: 1.6em; }
-            .greeting p { font-size: 0.9em; }
-            .main-content-scroll { padding: 0 15px 15px 15px; margin-top: -50px; }
-            .plant-card { padding: 15px; gap: 10px; max-width: none; }
-            .plant-card .icon { width: 50px; height: 50px; font-size: 2.2em; }
-            .plant-card-info h3 { font-size: 1.1em; }
-            .plant-card-info p { font-size: 0.8em; }
-            .points-card { padding: 15px; }
-            .points-card .details-btn { padding: 8px 15px; font-size: 0.8em; }
-            .section-title { font-size: 1.2em; margin-bottom: 15px; }
-            .features-grid { gap: 10px; }
-            .feature-item { padding: 15px 8px; border-radius: 15px; }
-            .feature-item .icon { font-size: 2em; margin-bottom: 8px; }
-            .feature-item span { font-size: 0.8em; }
-            .bottom-nav { padding: 8px 0; }
-            .nav-item i { font-size: 1.4em; }
-            .nav-item span { font-size: 0.65em; }
-        }
-    </style>
+  @media (max-width:420px){
+    .phone{height:100vh;border-radius:0}
+    .chat{padding:10px}
+  }
+</style>
 </head>
 <body>
-    <div class="app-container">
+  <div class="frame">
+    <div class="phone" role="application" aria-label="Montana Chat Analytics">
+      <div class="header">
+        <img class="avatar" src="https://i.pravatar.cc/150?img=5" alt="Montana">
+        <div class="meta">
+          <div class="title">Montana AI</div>
+          <div class="sub">Chat Analytics — Data Nursery</div>
+        </div>
+        <button id="btnMenu" class="sc-btn" title="Menu">Menu</button>
+      </div>
 
-    <!-- Header Section -->
-    <div class="header-bg"> <!-- Mengubah dari <a> menjadi <div> -->
-        <div class="header-top">
-            <div class="location-weather">
-                <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span id="currentLocation">Lokasi Anda</span></span>
-                <!-- Link perkiraan cuaca dipindahkan ke sini -->
-                <a href="https://www.msn.com/id-id/cuaca/prakiraan/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsImMiOiJJbmRvbmVzaWEiLCJpIjoiSUQiLCJ0IjoxMDIsImciOiJpZC1pZCIsIngiOiIxMTUuMTQ0IiwieSI6Ii0yLjkzMzYifQ%3D%3D&weadegreetype=C&cvid=04f8efd46fc4e61c726ce185e11fa39" aria-label="Lihat perkiraan cuaca di Rantau, Kalimantan Selatan" style="color: inherit; text-decoration: none;">
-                    <span><i class="fas fa-sun" aria-hidden="true"></i>Perkiraan Cuaca Hari Ini</span>
-                </a>
-            </div>
+      <div class="banner" id="bannerText">Muat data dari server. Aplikasi ini hanya menampilkan data (read-only).</div>
+
+      <div id="chat" class="chat" aria-live="polite"></div>
+
+      <div class="shortcuts" id="shortcuts">
+        <!-- shortcuts inserted dynamically -->
+      </div>
+
+      <div class="composer">
+        <div class="input">
+          <textarea id="input" placeholder="Ketik perintah: laporan harian / laporan 2025-10-30 / analisis stok / stok [jenis] / realisasi keluar"></textarea>
         </div>
-        <div class="greeting">
-            <div class="profile-header">
-                <div class="profile-photo" id="avatarContainer" role="button" tabindex="0" aria-label="Edit profil pengguna">
-                    <img id="avatarImage" src="https://via.placeholder.com/80/28a745/ffffff?text=NP" alt="Foto Profil Pengguna">
-                </div>
-                <div class="profile-info">
-                    <h2 id="userNameDisplay">Nama Pengguna</h2>
-                </div>
-            </div>
-            <h1>Halo, <span id="greetingName">Sahabat Montana</span>!</h1>
-            <p>Bayangkan jika kamu memiliki asisten analisis data canggih yang mampu melaporkan kondisi tanaman secara real-time, melakukan pendataan bibit otomatis, mendeteksi kesehatan daun, mengukur tinggi tanaman secara otomatis, dan bahkan menyediakan laporan melalui chatbot AI — semuanya terintegrasi dalam satu aplikasi: “Montana AI: Artificial Intelligence for Smart Land Reclamation.”</p>
-        </div>
+        <button id="sendBtn" class="send">Kirim</button>
+      </div>
     </div>
-        </a>
+  </div>
 
-        <!-- Modal Edit Profil -->
-        <div id="editProfileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="editProfileModalTitle">
-            <div class="modal-content">
-                <span class="close-button" id="closeEditModal" role="button" tabindex="0" aria-label="Tutup dialog edit profil">&times;</span>
-                <h2 id="editProfileModalTitle">Edit Profil Pengguna</h2>
-                <form id="profileForm">
-                    <label for="profileName">Nama Lengkap</label>
-                    <input type="text" id="profileName" placeholder="Nama Anda" aria-label="Input nama lengkap">
-
-                    <label for="profilePhotoInput">Foto Profil</label>
-                    <div class="file-input">
-                        <label class="btn-upload" for="profilePhotoInput">Pilih Foto</label>
-                        <input type="file" id="profilePhotoInput" accept="image/*" aria-label="Pilih foto profil dari perangkat Anda">
-                    </div>
-
-                    <div class="actions">
-                        <button type="button" class="btn-save" id="saveProfile">Simpan</button>
-                    </div>
-                </form>
-            </div>
+  <!-- Modal: charts / tables -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div id="modalTitle" style="font-weight:600"></div>
+        <div>
+          <button id="modalClose" class="modal-close">Tutup</button>
         </div>
-
-        <!-- Main Content Area -->
-        <div class="main-content-scroll">
-            <div class="points-card">
-                <h3 style="margin:0; font-weight:700; color:#2E7D32;">Status Pertumbuhan</h3>
-                <hr style="border:none; border-top:1px solid #E0E0E0; margin:8px 0;">
-
-                <div style="width:100%;">
-                    <p style="margin:6px 0;"><strong>Tingkatan Saat Ini:</strong> <span id="currentLevel">Semai</span></p>
-                    <p style="margin:6px 0;"><strong>Waktu Aktif:</strong> <span id="liveTime">0h 0j 0m 0d</span></p>
-
-                    <!-- Garis level -->
-                    <div style="margin-top:18px;">
-                        <div style="height:6px; background:#E0E0E0; border-radius:3px; position:relative;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress pertumbuhan tanaman">
-                            <div id="levelMarker"
-                                 style="position:absolute; top:-4px; width:14px; height:14px; border-radius:50%;
-                                        background:radial-gradient(circle, #66BB6A 0%, #43A047 60%, transparent 70%);
-                                        box-shadow:0 0 10px 3px rgba(76, 175, 80, 0.4);
-                                        animation:sparkle 1.2s infinite ease-in-out;">
-                            </div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.8em; color:#555;">
-                            <span>Semai</span><span>Pancang</span><span>Tiang</span><span>Pohon</span><span>Rimba</span>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="https://ebastari.github.io/Poin/Poin.html" class="details-btn" style="align-self:flex-end; margin-top:12px;">
-                    Selengkapnya ➜
-                </a>
-            </div>
-
-            <h2 class="section-title">Menu Utama</h2>
-            <div class="features-grid">
-
-                <a href="https://www.arcgis.com/sharing/rest/content/items/e422f795c4774c65af35b034f2255894/data" class="feature-item" aria-label="Download data realisasi penanaman">
-                    <span class="icon"><i class="fas fa-cloud-download-alt" aria-hidden="true"></i></span>
-                    <span>Download Realisasi Penanaman...</span>
-                </a>
-                <a href="https://www.arcgis.com/sharing/rest/content/items/5e253c50a5364155a37390eeac2cc819/data" class="feature-item" aria-label="Download data IPPKH">
-                    <span class="icon"><i class="fas fa-file-download" aria-hidden="true"></i></span>
-                    <span>Download Data IPPKH</span>
-                </a>
-                <a href="https://lookerstudio.google.com/s/oDcbCRPbvm0" class="feature-item" aria-label="Lihat laporan bibit">
-                    <span class="icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Laporan Bibit</span>
-                </a>
-
-                <a href="https://www.msn.com/id-id/cuaca/peta/radar/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsInIyIjoiVGFwaW4iLCJjIjoiSW5kb25lc2lhIiwiaSI6IklEIiwidCI6MTAyLCJnIjoiaWQtaWQiLCJ4IjoiMTE1LjA4OSIsInk6Ii0yLjk0ODkifQ%3D%3D&weadegreetype=C&zoom=13&rcmode=1" class="feature-item" aria-label="Lihat perkiraan cuaca">
-                    <span class="icon"><i class="fas fa-cloud-sun-rain" aria-hidden="true"></i></span>
-                    <span>Perkiraan Cuaca</span>
-                </a>
-                <a href="https://earth.google.com/earth/d/1d7_8J8ftqvA8qQ62EL41w5IeZ79UPipW?usp=sharing" class="feature-item" aria-label="Lihat rencana penanaman 2025 di Google Earth">
-                    <span class="icon"><i class="fas fa-globe" aria-hidden="true"></i></span>
-                    <span>Rencana Penanaman 2025</span>
-                </a>
-                <a href="https://drive.google.com/file/d/177quXwlMkQusQRSbZboRrNnFSqwNaZhw/view?usp=sharing" class="feature-item" aria-label="Lihat dokumen RR">
-                    <span class="icon"><i class="fas fa-book-open" aria-hidden="true"></i></span>
-                    <span>Dokumen RR</span>
-                </a>
-
-                <a href="https://earth.google.com/earth/d/15MlvXHfZ5jiCw2DftfL-p6dF7Mmn7Yck?usp=sharing" class="feature-item" aria-label="Lihat realisasi potting 2025 di Google Earth">
-                    <span class="icon"><i class="fas fa-seedling" aria-hidden="true"></i></span>
-                    <span>REALISASI POTTING 2025</span>
-                </a>
-                <a href="https://www.appsheet.com/start/1a40ac1b-9884-4c52-8891-7df37ba20d57" class="feature-item" aria-label="Lihat berita acara realisasi">
-                    <span class="icon"><i class="fas fa-newspaper" aria-hidden="true"></i></span>
-                    <span>BERITA ACARA REALISASI</span>
-                </a>
-                <a href="https://www.appsheet.com/start/f912f118-c330-4435-b1f2-2d8834992211" class="feature-item" aria-label="Lihat MOM (Minutes of Meeting)">
-                    <span class="icon"><i class="fas fa-handshake" aria-hidden="true"></i></span>
-                    <span>MOM</span>
-                </a>
-
-                <a href="https://www.appsheet.com/start/c686e2ea-ef8d-47bd-9318-80d81163c0c3" class="feature-item" aria-label="Manajemen Pestisida">
-                    <span class="icon"><i class="fas fa-spray-can" aria-hidden="true"></i></span>
-                    <span>PESTISIDA</span>
-                </a>
-                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item" aria-label="Lihat logbook bibit">
-                    <span class="icon"><i class="fas fa-book" aria-hidden="true"></i></span>
-                    <span>LOGBOOK BIBIT</span>
-                </a>
-                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item" aria-label="Lihat logbook pestisida">
-                    <span class="icon"><i class="fas fa-book-reader" aria-hidden="true"></i></span>
-                    <span>LOGBOOK PESTISIDA</span>
-                </a>
-
-                <a href="https://ebastari.github.io/camera00003/cameraeco.html" class="feature-item" aria-label="Buka aplikasi Montana V2">
-                    <span class="icon"><i class="fas fa-camera" aria-hidden="true"></i></span>
-                    <span>MONTANA V2</span>
-                </a>
-                <a href="https://ebastari.github.io/Kesehatan-Daun-AI/Kesehatan%20Daun%20AI.html" class="feature-item" aria-label="Lakukan analisis kesehatan daun dengan AI">
-                    <span class="icon"><i class="fas fa-heartbeat" aria-hidden="true"></i></span>
-                    <span>Analisis Kesehatan Daun</span>
-                </a>
-                <a href="https://ebastari.github.io/MontanaAI/Montana%20AI%20Sederhana.html" class="feature-item" aria-label="Buka chatbot Montana AI">
-                    <span class="icon"><i class="fas fa-headset" aria-hidden="true"></i></span>
-                    <span>Montana Nursery AI Planning Assistant</span>
-                </a>
-
-                <a href="https://ebastari.github.io/Tinggi/Tinggi%20Fix.Html" class="feature-item" aria-label="Gunakan pengukur tinggi tanaman">
-                    <span class="icon"><i class="fas fa-arrows-alt-v" aria-hidden="true"></i></span>
-                    <span>Pengukur Tinggi</span></a>
-                <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOMQ7CMBAE_7K1X-AWUSAUGhANpjjii2SR2BF2gMjy37lAEHVEeXOa3c24O37sE9VX6FP-XVseoRFNb3iOPBtpgFXy6hdZAGeyo-8BKIHkyKChn9dUTR-i8yNZ_dSs4yz65xvFtippEiZg1eU-SgFlBUeiGRJeW32tFKUVYE-ohsj3KkOUD4savnz15WwUriQ21kcsLJnTIJmABAAA=&view=Montana" class="feature-item" aria-label="Akses aplikasi My Maps Appsheet">
-                    <span class="icon"><i class="fas fa-globe" aria-hidden="true"></i></span>
-                    <span>My Maps Appsheet</span>
-                <a href="https://ebastari.github.io/AI-montana-Penamanan/AI%20Montana%20-%20Penanaman" class="feature-item" aria-label="Akses aplikasi My Maps Appsheet">
-                    <span class="icon"><i class="fas fa-robot" aria-hidden="true"></i></span>
-                    <span>Montana AI Reclamation Planning Assistant</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <a href="https://ebastari.github.io/homeadmin/HOME%20-%20admin.html" class="nav-item active" aria-label="Beranda">
-                <i class="fas fa-home" aria-hidden="true"></i>
-                <span>Beranda</span>
-            </a>
-            <a href="https://ebastari.github.io/dasboard-AI/testdas45.html" class="nav-item" aria-label="Lihat informasi bibit">
-                <i class="fas fa-seedling" aria-hidden="true"></i>
-                <span>Bibit</span>
-            </a>
-            <a href="https://ebastari.github.io/mapsmontana/mymaps.html" class="nav-item" aria-label="Akses peta Montana">
-                <i class="fas fa-leaf" aria-hidden="true"></i>
-                <span>Montana</span>
-            </a>
-            <a href="https://ebastari.github.io/notifikasi/notif.html" class="nav-item" aria-label="Lihat notifikasi">
-                <i class="fas fa-bell" aria-hidden="true"></i>
-                <span>Notifikasi</span>
-            </a>
-            <a href="https://ebastari.github.io/Profil/profil2" class="nav-item" aria-label="Lihat profil pengguna">
-                <i class="fas fa-user" aria-hidden="true"></i>
-                <span>Profil</span>
-            </a>
-            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOywrCMBRE_2XW-YLsRIoUHwsVN8ZFbG4h2CalSdUS8u8mVnFdXN5zOTMTcNf0OHhZ3cDP4XetaQRHEDiOHQlwgaU1vreNABPYyXaCq8Wm2JcCEfHCvrYnBx7myPyfZgatyHhda-pzUvZSwsdK7-wkMBmIDO3g5bWh99RkxJhYbavBkTqlGbPrXWmKZyeN2lqVAmvZOIovFtYuNVsBAAA=&view=GALERI" class="nav-item" aria-label="Lihat galeri foto">
-                <i class="fas fa-camera" aria-hidden="true"></i>
-                <span>GALERI</span>
-            </a>
-        </div>
+      </div>
+      <div id="modalBody"></div>
     </div>
+  </div>
+
 <script>
-    // ---- PROFIL LOKAL UNTUK HEADER ----
-    const avatarContainer = document.getElementById("avatarContainer");
-    const avatarImage = document.getElementById("avatarImage");
-    const userNameDisplay = document.getElementById("userNameDisplay");
-    const greetingName = document.getElementById("greetingName");
-    const editProfileModal = document.getElementById("editProfileModal");
-    const closeEditModal = document.getElementById("closeEditModal");
-    const profileNameInput = document.getElementById("profileName");
-    const profilePhotoInput = document.getElementById("profilePhotoInput");
-    const saveProfileBtn = document.getElementById("saveProfile");
+/* ================= CONFIG ================= */
+const API_URL = 'https://script.google.com/macros/s/AKfycbzC7tIzkd--1SENzfonhD7sCZn4ETRPTIyxxy9l5NS5BnZtx7bAexf0HTi5mk9Z1I6UJg/exec';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
 
-    const PROFILE_KEY = "montana_profile_v1";
+/* ================= UI helpers ================= */
+const chatEl = document.getElementById('chat');
+const inputEl = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const shortcutsEl = document.getElementById('shortcuts');
+const modalEl = document.getElementById('modal');
+const modalBody = document.getElementById('modalBody');
+const modalTitle = document.getElementById('modalTitle');
+const modalClose = document.getElementById('modalClose');
+const bannerText = document.getElementById('bannerText');
 
-    // Load profile data
-    function loadProfile() {
-      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      if (data.name) {
-        userNameDisplay.textContent = data.name;
-        greetingName.textContent = data.name.split(" ")[0];
-      }
-      if (data.photo) avatarImage.src = data.photo;
+function nowTime(){
+  return new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+}
+function createBubble(html, who='bot'){
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg-row ' + (who==='user' ? 'user' : 'bot');
+  const b = document.createElement('div');
+  b.className = 'bubble ' + (who==='user' ? 'user' : 'bot');
+  b.innerHTML = html;
+  const ts = document.createElement('div');
+  ts.className = 'ts';
+  ts.textContent = nowTime();
+  wrapper.appendChild(b);
+  wrapper.appendChild(ts);
+  chatEl.appendChild(wrapper);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+function showModal(title, contentHtml){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = contentHtml;
+  modalEl.classList.add('show');
+}
+function closeModal(){ modalEl.classList.remove('show'); modalBody.innerHTML=''; }
+
+/* ================= Data fetch & normalize ================= */
+let CACHE = { ts:0, data:[] };
+
+async function fetchData(limit = 0, force=false){
+  if(!force && Date.now() - CACHE.ts < CACHE_TTL && CACHE.data.length) return CACHE.data;
+  try{
+    const url = API_URL + (limit>0 ? `?limit=${limit}` : '');
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Server response ' + res.status);
+    const json = await res.json();
+    // If response wrapper {data: [...]}, use that
+    const raw = Array.isArray(json) ? json : (json.data || json);
+    CACHE = { ts: Date.now(), data: raw || [] };
+    bannerText.textContent = `Data dimuat: ${CACHE.data.length} baris (pembaruan: ${new Date().toLocaleString('id-ID')})`;
+    return CACHE.data;
+  }catch(err){
+    bannerText.textContent = 'Gagal memuat data: ' + err.message;
+    throw err;
+  }
+}
+
+function toNum(v){
+  if (v === null || v === undefined) return 0;
+  const s = String(v).replace(/[^\d\-.,]/g,'').replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+function parseDateFlexible(s){
+  if(!s) return null;
+  const tryDate = new Date(String(s));
+  if(!isNaN(tryDate)) return tryDate;
+  const m = String(s).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if(m){ return new Date(parseInt(m[3],10), parseInt(m[2],10)-1, parseInt(m[1],10)); }
+  return null;
+}
+
+function normalizeRows(raw){
+  return raw.map((r, idx) => {
+    const mapKey = key => {
+      if(!r) return '';
+      const keys = Object.keys(r);
+      const exact = keys.find(k => k.toLowerCase().trim() === key);
+      if(exact) return r[exact];
+      const alt = keys.find(k => k.toLowerCase().includes(key));
+      return alt ? r[alt] : '';
+    };
+    const tanggalRaw = r.Tanggal ?? r.tanggal ?? r.Date ?? r.date ?? mapKey('tanggal') ?? '';
+    const bibit = r.Bibit ?? r.bibit ?? r.Jenis ?? r.jenis ?? mapKey('bibit') ?? 'Unknown';
+    const masuk = toNum(r.Masuk ?? r.masuk ?? r['Jumlah Masuk'] ?? r['jumlah masuk'] ?? mapKey('masuk'));
+    const keluar = toNum(r.Keluar ?? r.keluar ?? r['Jumlah Keluar'] ?? mapKey('keluar'));
+    const mati = toNum(r.Mati ?? r.mati ?? r['Jumlah Mati'] ?? mapKey('mati'));
+    const sumber = r.Sumber ?? r.sumber ?? mapKey('sumber') ?? '';
+    const tujuan = r.Tujuan ?? r.tujuan ?? mapKey('tujuan') ?? '';
+    const pengawas = r.Pengawas ?? r.pengawas ?? mapKey('pengawas') ?? '';
+    const parsedDate = parseDateFlexible(tanggalRaw);
+    return {
+      __idx: idx,
+      __raw: r,
+      TanggalRaw: tanggalRaw,
+      Tanggal: parsedDate,
+      Bibit: String(bibit).trim(),
+      Masuk: masuk,
+      Keluar: keluar,
+      Mati: mati,
+      Sumber: String(sumber).trim(),
+      Tujuan: String(tujuan).trim(),
+      Pengawas: String(pengawas).trim()
+    };
+  }).filter(x => x); // keep all (some Tanggal may be null)
+}
+
+/* ================= Aggregation helpers ================= */
+function groupBy(arr, keyFn){
+  return arr.reduce((acc, it) => {
+    const k = keyFn(it);
+    (acc[k] ||= []).push(it);
+    return acc;
+  }, {});
+}
+function formatNumber(n){ return n.toLocaleString('id-ID'); }
+
+/* ================= Reports & Analysis ================= */
+function reportDaily(rows, date = new Date()){
+  const dayStr = date.toISOString().slice(0,10);
+  const filt = rows.filter(r => r.Tanggal && r.Tanggal.toISOString().slice(0,10) === dayStr);
+  const masuk = filt.reduce((s,r)=>s + r.Masuk, 0);
+  const keluar = filt.reduce((s,r)=>s + r.Keluar, 0);
+  const mati = filt.reduce((s,r)=>s + r.Mati, 0);
+  const totalNet = masuk - keluar - mati;
+  const byType = groupBy(filt, r => r.Bibit);
+  const rekap = Object.entries(byType).map(([k,v]) => ({ jenis:k, total: v.reduce((s,x)=>s + x.Masuk - x.Keluar - x.Mati, 0) }))
+    .sort((a,b)=>b.total - a.total);
+  const top = rekap.slice(0,5);
+  let narrative = `Ringkasan Harian — ${date.toLocaleDateString('id-ID')}\n\n`;
+  narrative += `Total masuk: ${formatNumber(masuk)}\n`;
+  narrative += `Total keluar: ${formatNumber(keluar)}\n`;
+  narrative += `Total mati: ${formatNumber(mati)}\n`;
+  narrative += `Total net (masuk - keluar - mati): ${formatNumber(totalNet)}\n\n`;
+  narrative += `Jenis dominan hari ini:\n`;
+  if(top.length) top.forEach(t => narrative += `- ${t.jenis}: ${formatNumber(t.total)}\n`);
+  else narrative += '- Tidak ada transaksi hari ini.\n';
+  return { narrative, data: filt, metrics:{masuk,keluar,mati,totalNet}, top };
+}
+
+function reportPeriod(rows, period='weekly', refDate=new Date()){
+  const end = new Date(refDate);
+  const start = new Date(refDate);
+  if(period === 'weekly'){ start.setDate(end.getDate() - 6); }
+  else if(period === 'monthly'){ start.setMonth(end.getMonth()); start.setDate(1); }
+  else if(period === 'yearly'){ start.setFullYear(end.getFullYear()); start.setMonth(0); start.setDate(1); }
+  const filt = rows.filter(r => r.Tanggal && r.Tanggal >= start && r.Tanggal <= end);
+  const masuk = filt.reduce((s,r)=>s + r.Masuk, 0);
+  const keluar = filt.reduce((s,r)=>s + r.Keluar, 0);
+  const mati = filt.reduce((s,r)=>s + r.Mati, 0);
+  const totalNet = masuk - keluar - mati;
+  return { period, start, end, masuk, keluar, mati, totalNet, rows:filt };
+}
+
+function analysisStockPerType(rows){
+  const grouped = groupBy(rows, r => r.Bibit || 'Unknown');
+  const result = Object.entries(grouped).map(([jenis, items]) => {
+    const masuk = items.reduce((s,i)=>s + i.Masuk, 0);
+    const keluar = items.reduce((s,i)=>s + i.Keluar, 0);
+    const mati = items.reduce((s,i)=>s + i.Mati, 0);
+    const stok = masuk - keluar - mati;
+    return { jenis, masuk, keluar, mati, stok };
+  }).sort((a,b)=>b.stok - a.stok);
+  return result;
+}
+
+function analysisTeamPerformance(rows){
+  const grouped = groupBy(rows, r => r.Pengawas || 'Syahrudin');
+  const result = Object.entries(grouped).map(([team, items]) => {
+    const masuk = items.reduce((s,i)=>s + i.Masuk, 0);
+    const keluar = items.reduce((s,i)=>s + i.Keluar, 0);
+    const mati = items.reduce((s,i)=>s + i.Mati, 0);
+    const net = masuk - keluar - mati;
+    const mortalityRate = masuk > 0 ? (mati / masuk * 100) : 0;
+    const efficiency = masuk > 0 ? ((masuk - mati) / masuk * 100) : 0;
+    return { team, masuk, keluar, mati, net, mortalityRate, efficiency };
+  }).sort((a,b)=>b.efficiency - a.efficiency);
+  return result;
+}
+
+function analysisInternalVsExternal(rows){
+  const internalKeywords = ['pembibitan','internal','nursery','ebl','energi','internal nursery'];
+  const classified = rows.map(r => {
+    const s = (r.Sumber || '').toLowerCase();
+    const isInternal = internalKeywords.some(k => s.includes(k));
+    return {...r, isInternal};
+  });
+  const grouped = groupBy(classified, r => r.isInternal ? 'Internal' : 'Eksternal');
+  const summary = Object.entries(grouped).map(([k,items]) => {
+    const masuk = items.reduce((s,i)=>s + i.Masuk, 0);
+    const keluar = items.reduce((s,i)=>s + i.Keluar, 0);
+    const mati = items.reduce((s,i)=>s + i.Mati, 0);
+    return { sumber:k, masuk, keluar, mati, count: items.length };
+  });
+  return summary;
+}
+
+function detectAnomalies(rows){
+  const byType = groupBy(rows, r => r.Bibit || 'Unknown');
+  const anomalies = [];
+  Object.entries(byType).forEach(([jenis, items]) => {
+    const byDate = groupBy(items.filter(x=>x.Tanggal), x => x.Tanggal.toISOString().slice(0,10));
+    const dates = Object.keys(byDate).sort();
+    if(dates.length < 3) return;
+    const dailyNet = dates.map(d => byDate[d].reduce((s,i)=>s + i.Masuk - i.Keluar - i.Mati, 0));
+    const avg = dailyNet.reduce((a,b)=>a+b,0) / dailyNet.length;
+    const last = dailyNet[dailyNet.length-1];
+    if(avg !== 0 && Math.abs((last - avg) / (Math.abs(avg) || 1)) > 0.6){
+      anomalies.push({ jenis, issue: 'Perubahan net harian signifikan', avg: Math.round(avg), last: last });
+    }
+    const mortDaily = dates.map(d => byDate[d].reduce((s,i)=>s + i.Mati, 0));
+    const avgMort = mortDaily.reduce((a,b)=>a+b,0) / mortDaily.length;
+    const lastMort = mortDaily[mortDaily.length-1];
+    if(avgMort > 0 && lastMort / avgMort > 3){
+      anomalies.push({ jenis, issue: 'Lonjakan mortalitas', avgMort: Math.round(avgMort), lastMort });
+    }
+  });
+  return anomalies;
+}
+
+/* ================= Chart helpers ================= */
+function renderBarChart(containerId, labels, data, labelText){
+  const ctx = document.getElementById(containerId).getContext('2d');
+  return new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: labelText, data, backgroundColor: 'rgba(15,157,128,0.85)' }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
+  });
+}
+function renderLineChart(containerId, labels, datasets){
+  const ctx = document.getElementById(containerId).getContext('2d');
+  return new Chart(ctx, { type:'line', data:{ labels, datasets }, options:{ responsive:true, maintainAspectRatio:false }});
+}
+
+/* ============ Narasi Analisis Otomatis ============ */
+function generateNarrative(type, d) {
+  if(!d) d = {};
+  switch(type) {
+    case 'realisasi_keluar': {
+      const lines = [];
+      lines.push(`Realisasi Keluar — Ringkasan periode terpilih`);
+      lines.push(`Total bibit keluar: ${formatNumber(d.total || 0)} unit.`);
+      lines.push(`Jenis dominan keluaran: ${d.jenisDominan || 'Tidak tersedia'}.`);
+      if(d.tanggalPuncak) lines.push(`Puncak distribusi terjadi: ${d.tanggalPuncak}.`);
+      if(typeof d.proporsiKeluar === 'number') lines.push(`Kontribusi puncak terhadap mingguan: ${d.proporsiKeluar}%`);
+      if(d.lokasiUtama) lines.push(`Lokasi distribusi utama: ${d.lokasiUtama}.`);
+      lines.push('');
+      lines.push(`Analisis singkat: Tren menunjukkan permintaan yang meningkat untuk jenis ${d.jenisDominan || 'tertentu'}. Disarankan menjaga buffer stok minimal 10% di atas rata-rata keluaran mingguan untuk menghindari kekosongan suplai.`);
+      return lines.join('\n');
     }
 
-    // Save profile data
-    function saveProfile() {
-      const name = profileNameInput.value.trim() || "Sahabat Montana";
-      const photo = avatarImage.src;
-      const data = { name, photo };
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
-      loadProfile();
-      editProfileModal.style.display = "none";
+    case 'realisasi_masuk': {
+      const lines = [];
+      lines.push(`Realisasi Masuk — Ringkasan periode terpilih`);
+      lines.push(`Total bibit masuk: ${formatNumber(d.total || 0)} unit.`);
+      lines.push(`Jenis terbesar berdasarkan masuk: ${d.jenis1 || 'Tidak tersedia'} (${d.kontribusi1 || 0}%), ${d.jenis2 || 'Tidak tersedia'} (${d.kontribusi2 || 0}%).`);
+      lines.push('');
+      lines.push(`Analisis singkat: Peningkatan penambahan bibit menunjukkan keberhasilan proses pembibitan internal. Pertahankan pengawasan mortalitas untuk memastikan efisiensi. Rekomendasi target perbanyakan: +12% pada periode berikut.`);
+      return lines.join('\n');
     }
 
-    // Convert image to Base64 and save
-    profilePhotoInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        avatarImage.src = reader.result;
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Show modal when profile photo clicked
-    avatarContainer.addEventListener("click", () => {
-      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      profileNameInput.value = data.name || "";
-      editProfileModal.style.display = "flex";
-    });
-
-    // Close modal
-    closeEditModal.addEventListener("click", () => {
-      editProfileModal.style.display = "none";
-    });
-
-    // Save
-    saveProfileBtn.addEventListener("click", saveProfile);
-
-    // Load when page loads
-    document.addEventListener("DOMContentLoaded", loadProfile);
-
-    // Elemen yang digunakan
-    const levelDisplay = document.getElementById("currentLevel");
-    const timeDisplay = document.getElementById("liveTime");
-    const levelMarker = document.getElementById("levelMarker");
-    const currentLocationSpan = document.getElementById("currentLocation");
-
-    // Ambil waktu aktif sebelumnya (jika ada)
-    let totalSeconds = parseInt(localStorage.getItem("activeSeconds")) || 0;
-
-    // Fungsi untuk mendapatkan lokasi pengguna
-    function getCurrentLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          currentLocationSpan.textContent = ` (Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)})`;
-        }, error => {
-          console.error("Error getting location: ", error);
-          currentLocationSpan.textContent = "Lokasi tidak tersedia";
-        });
-      } else {
-        currentLocationSpan.textContent = "Geolocation tidak didukung";
-      }
+    case 'per_jenis': {
+      const lines = [];
+      lines.push(`Analisis Per Jenis — Stok & Tren`);
+      lines.push(`Jenis tertinggi: ${d.top1 || '-'} (${formatNumber(d.top1stok || 0)}), ${d.top2 || '-'} (${formatNumber(d.top2stok || 0)}), ${d.top3 || '-'} (${formatNumber(d.top3stok || 0)}).`);
+      lines.push(`Jenis terendah: ${d.low1 || '-'} (${formatNumber(d.low1stok || 0)}), ${d.low2 || '-'} (${formatNumber(d.low2stok || 0)}).`);
+      lines.push('');
+      lines.push(`Analisis singkat: Jenis berputar cepat memerlukan manajemen aliran stok (rotasi). Untuk jenis dengan stok rendah direkomendasikan melakukan perbanyakan ulang dan pemantauan mortalitas ketat pada fase awal.`);
+      return lines.join('\n');
     }
 
-    // Jalankan fungsi lokasi saat halaman dimuat
-    getCurrentLocation();
+    case 'per_tanggal': {
+      const lines = [];
+      lines.push(`Laporan Per Tanggal — ${d.tanggal || '-'}`);
+      lines.push(`Bibit keluar: ${formatNumber(d.keluar || 0)} (${d.jenisDominan || '-'})`);
+      lines.push(`Bibit masuk: ${formatNumber(d.masuk || 0)}`);
+      lines.push(`Bibit mati: ${formatNumber(d.mati || 0)}`);
+      lines.push(`Nett hari itu: ${formatNumber(d.net || 0)}`);
+      lines.push('');
+      lines.push(`Analisis singkat: ${d.trenHari && d.trenHari>1 ? `Terjadi tren penurunan selama ${d.trenHari} hari terakhir.` : 'Tidak ada tren penurunan berulang yang signifikan.'}`);
+      lines.push(`Rekomendasi: tingkatkan suplai jenis ${d.jenisDominan || '-'} dalam 48 jam jika penurunan berlanjut.`);
+      return lines.join('\n');
+    }
 
-    // Jalankan setiap detik
-    setInterval(() => {
-      totalSeconds++;
-      localStorage.setItem("activeSeconds", totalSeconds);
+    case 'bulanan': {
+      const lines = [];
+      lines.push(`Laporan Bulanan — ${d.bulan || '-'}`);
+      lines.push(`Perubahan stok dibanding bulan sebelumnya: ${d.kenaikanPersen || 0}%`);
+      if(d.topJenis1) lines.push(`Kontributor terbesar: ${d.topJenis1} (+${formatNumber(d.jumlah1 || 0)}) dan ${d.topJenis2} (+${formatNumber(d.jumlah2 || 0)})`);
+      lines.push('');
+      lines.push(`Analisis singkat: Penurunan mortalitas menunjukkan perbaikan operasional. Jika tren bertahan, proyeksi stok akhir bulan berikut dapat mencapai ${formatNumber(d.proyeksi || 0)} bibit.`);
+      return lines.join('\n');
+    }
 
-      // Hitung waktu aktif
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-      timeDisplay.textContent = `${days}h ${hours}j ${minutes}m ${seconds}d`;
+    case 'tahunan': {
+      const lines = [];
+      lines.push(`Laporan Tahunan — Sampai ${d.bulanAkhir || '-'} ${d.tahun || '-'}`);
+      lines.push(`Total bibit dikelola: ${formatNumber(d.total || 0)} unit dari ${d.jumlahJenis || 0} jenis.`);
+      lines.push(`Pertumbuhan stok bersih: ${d.kenaikanPersen || 0}%`);
+      if(d.produktif) lines.push(`Bibit paling produktif: ${d.produktif}`);
+      lines.push('');
+      lines.push(`Analisis singkat: Efisiensi produksi ${d.efisiensi || 0}%; direkomendasikan peningkatan kapasitas persemaian ${d.rekomendasi || 10}% tahun berikutnya.`);
+      return lines.join('\n');
+    }
 
-      // Tentukan posisi level berdasarkan waktu aktif
-      const minutesActive = totalSeconds / 60;
-      let level = "Semai";
-      let positionPercent = 0;
+    case 'internal_vs_external': {
+      const lines = [];
+      lines.push(`Perbandingan Internal vs Eksternal`);
+      (d.summary||[]).forEach(s => {
+        lines.push(`${s.sumber}: Masuk ${formatNumber(s.masuk)}, Keluar ${formatNumber(s.keluar)}, Mati ${formatNumber(s.mati)}.`);
+      });
+      lines.push('');
+      lines.push(`Analisis singkat: Jika kontribusi eksternal tinggi, pertimbangkan strategi peningkatan produksi internal untuk mengurangi risiko pasokan.`);
+      return lines.join('\n');
+    }
 
-      if (minutesActive >= 60) {
-        level = "Rimba";
-        positionPercent = 100;
-      } else if (minutesActive >= 30) {
-        level = "Pohon";
-        positionPercent = 75;
-      } else if (minutesActive >= 15) {
-        level = "Tiang";
-        positionPercent = 50;
-      } else if (minutesActive >= 5) {
-        level = "Pancang";
-        positionPercent = 25;
-      } else {
-        level = "Semai";
-        positionPercent = 0;
+    case 'anomalies': {
+      if(!d || !d.length) return 'Tidak ditemukan anomali signifikan dalam periode yang dianalisis.';
+      const lines = ['Anomali terdeteksi:'];
+      d.forEach(a => {
+        if(a.issue === 'Perubahan net harian signifikan'){
+          lines.push(`- ${a.jenis}: perubahan net harian mendadak (rata-rata ${a.avg}, nilai terakhir ${a.last}).`);
+        } else if(a.issue === 'Lonjakan mortalitas'){
+          lines.push(`- ${a.jenis}: lonjakan mortalitas (rata-rata ${a.avgMort || '?'} hari, terakhir ${a.lastMort}).`);
+        } else {
+          lines.push(`- ${a.jenis}: ${a.issue}`);
+        }
+      });
+      lines.push('');
+      lines.push('Rekomendasi: investigasi penyebab, cek catatan pengiriman dan kondisi lapangan pada tanggal-anomali.');
+      return lines.join('\n');
+    }
+
+    default:
+      return '';
+  }
+}
+
+/* ================= Chat commands & shortcuts ================= */
+const SHORTCUTS = [
+  { id:'laporan_harian', label:'Laporan Harian' },
+  { id:'laporan_mingguan', label:'Laporan Mingguan' },
+  { id:'laporan_bulanan', label:'Laporan Bulanan' },
+  { id:'realisasi_masuk', label:'Realisasi Masuk' },
+  { id:'realisasi_keluar', label:'Realisasi Keluar' },
+  { id:'analisis_stok', label:'Analisis Stok per Jenis' },
+  { id:'analisis_tim', label:'Analisis Kinerja Tim' },
+  { id:'internal_vs_eksternal', label:'Internal vs Eksternal' },
+  { id:'grafik_stok', label:'Grafik Stok per Jenis' },
+  { id:'laporan_tanggal', label:'Laporan per Tanggal' },
+  { id:'deteksi_anomali', label:'Deteksi Anomali' },
+  { id:'bantuan', label:'Bantuan & Panduan' }
+];
+
+function initShortcuts(){
+  shortcutsEl.innerHTML = '';
+  SHORTCUTS.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'sc-btn';
+    btn.textContent = s.label;
+    btn.onclick = () => handleShortcut(s.id);
+    shortcutsEl.appendChild(btn);
+  });
+}
+
+/* ================= High-level handlers ================= */
+async function handleShortcut(id){
+  try{
+    createBubble('Permintaan: ' + (SHORTCUTS.find(s=>s.id===id)?.label || id), 'user');
+    const raw = await fetchData();
+    const rows = normalizeRows(raw);
+
+    switch(id){
+      case 'laporan_harian': {
+        const rep = reportDaily(rows, new Date());
+        createBubble(rep.narrative, 'bot');
+        const html = `<div><strong>Rekap jenis (top 10)</strong><div class="small">Urut berdasarkan stok net hari ini</div><table><thead><tr><th>Jenis</th><th>Net</th></tr></thead><tbody>${rep.top.map(t=>`<tr><td>${escapeHtml(t.jenis)}</td><td>${formatNumber(t.total)}</td></tr>`).join('')}</tbody></table></div>`;
+        showModal('Detail Laporan Harian', html);
+        createBubble('Laporan harian selesai. Anda dapat menutup jendela detail untuk kembali ke chat.', 'bot');
+        break;
       }
 
-      // Update tampilan di dashboard
-      levelDisplay.textContent = level;
-      levelMarker.style.left = `calc(${positionPercent}% - 7px)`; // agar titik hijau tetap di tengah
-    }, 1000);
+      case 'laporan_mingguan': {
+        const rep = reportPeriod(rows, 'weekly', new Date());
+        const narrative = `Laporan Mingguan\nPeriode: ${rep.start.toLocaleDateString('id-ID')} - ${rep.end.toLocaleDateString('id-ID')}\nMasuk: ${formatNumber(rep.masuk)}\nKeluar: ${formatNumber(rep.keluar)}\nMati: ${formatNumber(rep.mati)}\nNet: ${formatNumber(rep.totalNet)}`;
+        createBubble(narrative, 'bot');
+        showModal('Detail Laporan Mingguan', `<pre>${escapeHtml(narrative)}</pre>`);
+        break;
+      }
+
+      case 'laporan_bulanan': {
+        const rep = reportPeriod(rows, 'monthly', new Date());
+        const kenaikanPersen = rows.length ? Math.round(((rep.totalNet || 0) / Math.max(1, rep.totalNet - 0)) * 100) : 0;
+        const narrative = `Laporan Bulanan\nPeriode: ${rep.start.toLocaleDateString('id-ID')} - ${rep.end.toLocaleDateString('id-ID')}\nMasuk: ${formatNumber(rep.masuk)}\nKeluar: ${formatNumber(rep.keluar)}\nMati: ${formatNumber(rep.mati)}\nNet: ${formatNumber(rep.totalNet)}`;
+        createBubble(narrative, 'bot');
+        showModal('Detail Laporan Bulanan', `<pre>${escapeHtml(narrative)}</pre>`);
+        break;
+      }
+
+      case 'realisasi_masuk': {
+        const total = rows.reduce((s,r)=>s + r.Masuk, 0);
+        // top types by Masuk
+        const perType = groupBy(rows, r => r.Bibit);
+        const typeSummary = Object.entries(perType).map(([k,v]) => ({ jenis:k, masuk: v.reduce((a,b)=>a+b.Masuk,0) })).sort((a,b)=>b.masuk - a.masuk);
+        const jenis1 = typeSummary[0]?.jenis || 'N/A'; const jumlah1 = typeSummary[0]?.masuk || 0;
+        const jenis2 = typeSummary[1]?.jenis || 'N/A'; const jumlah2 = typeSummary[1]?.masuk || 0;
+        const kontribusi1 = total ? Math.round(jumlah1 / total * 100) : 0;
+        const kontribusi2 = total ? Math.round(jumlah2 / total * 100) : 0;
+        const summary = { total, jenis1, jenis2, kontribusi1, kontribusi2 };
+        const narasi = generateNarrative('realisasi_masuk', summary);
+        createBubble(narasi, 'bot');
+        createBubble('Analisis tambahan: tren penambahan dicatat, pantau mortalitas untuk menjaga efisiensi produksi.', 'bot');
+        break;
+      }
+
+      case 'realisasi_keluar': {
+        const total = rows.reduce((s,r)=>s + r.Keluar, 0);
+        const perType = groupBy(rows, r => r.Bibit);
+        const typeSummary = Object.entries(perType).map(([k,v]) => ({ jenis:k, keluar: v.reduce((a,b)=>a+b.Keluar,0) })).sort((a,b)=>b.keluar - a.keluar);
+        const jenisDominan = typeSummary[0]?.jenis || 'N/A';
+        // find date with highest keluar
+        const byDate = groupBy(rows.filter(r=>r.Tanggal), r => r.Tanggal.toISOString().slice(0,10));
+        const dateSummary = Object.entries(byDate).map(([d,items])=>({ date:d, keluar: items.reduce((s,i)=>s+i.Keluar,0) })).sort((a,b)=>b.keluar - a.keluar);
+        const tanggalPuncak = dateSummary[0]?.date ? new Date(dateSummary[0].date).toLocaleDateString('id-ID') : null;
+        const weeklyTotal = (() => {
+          const now = new Date();
+          const weekStart = new Date(now); weekStart.setDate(now.getDate()-6);
+          return rows.filter(r=>r.Tanggal && r.Tanggal>=weekStart).reduce((s,r)=>s+r.Keluar,0);
+        })();
+        const proporsiKeluar = weeklyTotal ? Math.round((dateSummary[0]?.keluar || 0) / Math.max(1, weeklyTotal) * 100) : 0;
+        // top tujuan
+        const tujuanSummary = Object.entries(groupBy(rows, r=>r.Tujuan)).map(([t,items]) => ({ tujuan:t || 'Tidak ditentukan', count: items.reduce((s,i)=>s+i.Keluar,0) })).sort((a,b)=>b.count - a.count);
+        const lokasiUtama = tujuanSummary[0]?.tujuan || '';
+        const summary = { total, jenisDominan, tanggalPuncak, proporsiKeluar, lokasiUtama };
+        const narasi = generateNarrative('realisasi_keluar', summary);
+        createBubble(narasi, 'bot');
+        createBubble('Analisis tambahan: berdasarkan 30 hari terakhir, rasio keluar-masuk mendekati stabilitas target. Rekomendasi buffer stok dan pengecekan permintaan lapangan.', 'bot');
+        break;
+      }
+
+      case 'analisis_stok': {
+        const stok = analysisStockPerType(rows);
+        const summary = {
+          top1: stok[0]?.jenis || '-',
+          top1stok: stok[0]?.stok || 0,
+          top2: stok[1]?.jenis || '-',
+          top2stok: stok[1]?.stok || 0,
+          top3: stok[2]?.jenis || '-',
+          top3stok: stok[2]?.stok || 0,
+          low1: stok[stok.length-1]?.jenis || '-',
+          low1stok: stok[stok.length-1]?.stok || 0,
+          low2: stok[stok.length-2]?.jenis || '-',
+          low2stok: stok[stok.length-2]?.stok || 0
+        };
+        const narasi = generateNarrative('per_jenis', summary);
+        createBubble(narasi, 'bot');
+        const html = `<div><strong>Analisis Stok per Jenis</strong><div class="small">Urut berdasarkan stok akhir</div><table><thead><tr><th>Jenis</th><th>Masuk</th><th>Keluar</th><th>Mati</th><th>Stok</th></tr></thead><tbody>${stok.map(s=>`<tr><td>${escapeHtml(s.jenis)}</td><td>${formatNumber(s.masuk)}</td><td>${formatNumber(s.keluar)}</td><td>${formatNumber(s.mati)}</td><td>${formatNumber(s.stok)}</td></tr>`).join('')}</tbody></table></div>`;
+        showModal('Analisis Stok per Jenis', html);
+        break;
+      }
+
+      case 'analisis_tim': {
+        const perf = analysisTeamPerformance(rows);
+        const html = `<div><strong>Analisis Kinerja Tim</strong><div class="small">Urut berdasarkan efisiensi</div><table><thead><tr><th>Tim/Pengawas</th><th>Masuk</th><th>Mati</th><th>Efisiensi (%)</th></tr></thead><tbody>${perf.map(p=>`<tr><td>${escapeHtml(p.team)}</td><td>${formatNumber(p.masuk)}</td><td>${formatNumber(p.mati)}</td><td>${p.efficiency.toFixed(1)}</td></tr>`).join('')}</tbody></table></div>`;
+        const narrative = `Analisis kinerja tim: terdata ${perf.length} pengawas/kelompok. Perhatikan pengawas dengan mortalitas tinggi dan efisiensi rendah. Rekomendasi tinjauan prosedur perawatan bibit pada kelompok tersebut.`;
+        createBubble(narrative, 'bot');
+        showModal('Analisis Kinerja Tim', html);
+        break;
+      }
+
+      case 'internal_vs_eksternal': {
+        const summary = analysisInternalVsExternal(rows);
+        const narrative = generateNarrative('internal_vs_external', { summary });
+        createBubble(narrative, 'bot');
+        showModal('Internal vs Eksternal', `<pre>${escapeHtml(narrative)}</pre>`);
+        break;
+      }
+
+      case 'grafik_stok': {
+        const stok = analysisStockPerType(rows);
+        const labels = stok.map(s=>s.jenis);
+        const data = stok.map(s=>s.stok);
+        const chartHtml = `<div style="height:340px"><canvas id="chartStock"></canvas></div><div class="small" style="margin-top:8px">Grafik menampilkan stok akhir per jenis.</div>`;
+        showModal('Grafik Stok per Jenis', chartHtml);
+        setTimeout(()=> {
+          try { renderBarChart('chartStock', labels, data, 'Stok'); } catch(e){ console.error(e); }
+        }, 120);
+        createBubble('Grafik stok per jenis ditampilkan di jendela detail.', 'bot');
+        break;
+      }
+
+      case 'laporan_tanggal': {
+        createBubble('Masukkan perintah "laporan YYYY-MM-DD" untuk melihat laporan pada tanggal tertentu.', 'bot');
+        break;
+      }
+
+      case 'deteksi_anomali': {
+        const anomalies = detectAnomalies(rows);
+        const narrative = generateNarrative('anomalies', anomalies);
+        createBubble(narrative, 'bot');
+        showModal('Deteksi Anomali', `<pre>${escapeHtml(narrative)}</pre>`);
+        break;
+      }
+
+      case 'bantuan': {
+        const help = `Panduan singkat:
+- "laporan harian" — ringkasan hari ini
+- "laporan YYYY-MM-DD" — laporan per tanggal
+- "laporan mingguan/bulanan" — rekap periodik
+- "realisasi masuk/keluar" — total realisasi
+- "analisis stok" — stok per jenis (detail)
+- "analisis tim" — performa per pengawas
+- "grafik stok" — grafik interaktif stok per jenis
+- "stok [jenis]" — detail transaksi untuk jenis
+- "deteksi anomali" — cari peringatan mortalitas/perubahan drastis
+Gunakan tombol pintasan untuk akses cepat.`;
+        createBubble(help, 'bot');
+        break;
+      }
+
+      default:
+        createBubble('Perintah tidak dikenali.', 'bot');
+    }
+  }catch(err){
+    createBubble('Terjadi kesalahan saat mengambil data: ' + err.message, 'bot');
+  }
+}
+
+/* ================= User typed commands ================= */
+async function processUserCommand(text){
+  const raw = await fetchData();
+  const rows = normalizeRows(raw);
+  const q = text.trim().toLowerCase();
+
+  const dateMatch = q.match(/laporan\s+(\d{4}-\d{2}-\d{2})/);
+  if(q === 'laporan harian' || q === 'laporan hari ini'){
+    const rep = reportDaily(rows, new Date());
+    createBubble(rep.narrative, 'bot');
+    return;
+  } else if(dateMatch){
+    const dStr = dateMatch[1];
+    const d = new Date(dStr);
+    if(isNaN(d)) { createBubble('Format tanggal tidak valid. Gunakan YYYY-MM-DD.', 'bot'); return; }
+    const rep = reportDaily(rows, d);
+    createBubble(rep.narrative, 'bot');
+    const html = `<div><strong>Transaksi ${d.toLocaleDateString('id-ID')}</strong><table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Masuk</th><th>Keluar</th><th>Mati</th></tr></thead><tbody>${rep.data.map(r=>`<tr><td>${escapeHtml(r.TanggalRaw || '')}</td><td>${escapeHtml(r.Bibit)}</td><td>${formatNumber(r.Masuk)}</td><td>${formatNumber(r.Keluar)}</td><td>${formatNumber(r.Mati)}</td></tr>`).join('')}</tbody></table></div>`;
+    showModal('Detail Laporan per Tanggal', html);
+    return;
+  }
+
+  if(q.includes('realisasi masuk')){
+    const total = rows.reduce((s,r)=>s + r.Masuk, 0);
+    createBubble('Total realisasi masuk: ' + formatNumber(total), 'bot');
+    return;
+  }
+  if(q.includes('realisasi keluar')){
+    const total = rows.reduce((s,r)=>s + r.Keluar, 0);
+    createBubble('Total realisasi keluar: ' + formatNumber(total), 'bot');
+    return;
+  }
+
+  const stokMatch = q.match(/^stok\s+(.+)$/);
+  if(stokMatch){
+    const jenis = stokMatch[1].trim().toLowerCase();
+    const filtered = rows.filter(r => (r.Bibit || '').toLowerCase() === jenis);
+    if(!filtered.length){ createBubble('Jenis tidak ditemukan: ' + jenis, 'bot'); return; }
+    const masuk = filtered.reduce((s,r)=>s + r.Masuk, 0);
+    const keluar = filtered.reduce((s,r)=>s + r.Keluar, 0);
+    const mati = filtered.reduce((s,r)=>s + r.Mati, 0);
+    const stok = masuk - keluar - mati;
+    const narrative = `Stok jenis ${jenis}:\nMasuk: ${formatNumber(masuk)}\nKeluar: ${formatNumber(keluar)}\nMati: ${formatNumber(mati)}\nStok akhir: ${formatNumber(stok)}`;
+    createBubble(narrative, 'bot');
+    const html = `<div><strong>Transaksi ${escapeHtml(jenis)}</strong><table><thead><tr><th>Tanggal</th><th>Masuk</th><th>Keluar</th><th>Mati</th></tr></thead><tbody>${filtered.map(r=>`<tr><td>${escapeHtml(r.TanggalRaw)}</td><td>${formatNumber(r.Masuk)}</td><td>${formatNumber(r.Keluar)}</td><td>${formatNumber(r.Mati)}</td></tr>`).join('')}</tbody></table></div>`;
+    showModal('Detail Transaksi: ' + jenis, html);
+    return;
+  }
+
+  if(q.includes('analisis stok') || q.includes('analisis per jenis')){
+    const stok = analysisStockPerType(rows);
+    const narrative = `Analisis Stok: jumlah jenis tersedia ${stok.length}. Jenis utama: ${stok.slice(0,3).map(s=>s.jenis + ' (' + formatNumber(s.stok) + ')').join(', ')}.`;
+    createBubble(narrative, 'bot');
+    const html = `<div><strong>Analisis Stok per Jenis</strong><table><thead><tr><th>Jenis</th><th>Stok</th><th>Status</th></tr></thead><tbody>${stok.map(s=>`<tr><td>${escapeHtml(s.jenis)}</td><td>${formatNumber(s.stok)}</td><td>${s.stok<=0 ? 'Habis' : s.stok < 200 ? 'Menipis' : 'Aman'}</td></tr>`).join('')}</tbody></table></div>`;
+    showModal('Analisis Stok per Jenis', html);
+    return;
+  }
+
+  if(q.includes('analisis tim') || q.includes('kinerja tim')){
+    const perf = analysisTeamPerformance(rows);
+    const narrative = `Analisis kinerja: terdata ${perf.length} pengawas/kelompok. Rekomendasi: tinjau pengawas dengan mortalitas > 10%.`;
+    createBubble(narrative, 'bot');
+    const html = `<div><strong>Analisis Kinerja Tim</strong><table><thead><tr><th>Tim</th><th>Masuk</th><th>Mati</th><th>Nilai Kinerja (%)</th></tr></thead><tbody>${perf.map(p=>`<tr><td>${escapeHtml(p.team)}</td><td>${formatNumber(p.masuk)}</td><td>${formatNumber(p.mati)}</td><td>${p.efficiency.toFixed(1)}</td></tr>`).join('')}</tbody></table></div>`;
+    showModal('Analisis Kinerja Tim', html);
+    return;
+  }
+
+  if(q.includes('deteksi anomali') || q.includes('anomali')){
+    const anomalies = detectAnomalies(rows);
+    const narrative = generateNarrative('anomalies', anomalies);
+    createBubble(narrative, 'bot');
+    showModal('Deteksi Anomali', `<pre>${escapeHtml(narrative)}</pre>`);
+    return;
+  }
+
+  createBubble('Perintah tidak dikenali. Ketik "bantuan" untuk daftar perintah atau gunakan tombol pintasan di bawah.', 'bot');
+}
+
+/* ================= Utilities ================= */
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ================= EVENT BINDINGS ================= */
+sendBtn.addEventListener('click', async ()=>{
+  const val = inputEl.value.trim();
+  if(!val) return;
+  createBubble(escapeHtml(val), 'user');
+  inputEl.value = '';
+  await processUserCommand(val);
+});
+inputEl.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendBtn.click(); }
+});
+modalClose.addEventListener('click', closeModal);
+document.getElementById('btnMenu').addEventListener('click', ()=> {
+  const help = `Menu cepat tersedia. Gunakan tombol di layar untuk menjalankan perintah. Untuk laporan per tanggal ketik "laporan YYYY-MM-DD". Untuk analisis stok ketik "analisis stok" atau tekan tombol pintasan.`;
+  createBubble(help, 'bot');
+});
+
+/* ================= INITIALIZATION ================= */
+async function init(){
+  initShortcuts();
+  createBubble('Selamat datang. Saya Montana AI. Data akan dimuat dari server untuk analisis dan laporan. Untuk panduan singkat ketik "bantuan" atau gunakan menu cepat.', 'bot');
+  try{
+    await fetchData();
+    const rows = normalizeRows(CACHE.data);
+    const stokSummary = analysisStockPerType(rows);
+    const totalStok = stokSummary.reduce((a,b)=>a+b.stok,0);
+    const jenisCount = [...new Set(rows.map(r=>r.Bibit))].length;
+    createBubble(`Ringkasan awal: ${formatNumber(rows.length)} baris data, ${formatNumber(jenisCount)} jenis bibit, estimasi stok keseluruhan: ${formatNumber(totalStok)}.`, 'bot');
+    // Friendly closing suggestion (end-of-initial)
+    createBubble('Silakan pilih menu cepat atau ketik perintah. Laporan dan analisis diperbarui secara berkala dari sumber data utama.', 'bot');
+  }catch(err){
+    createBubble('Tidak dapat memuat data: ' + err.message, 'bot');
+  }
+}
+
+init();
 </script>
 </body>
 </html>
-
-
-
-
-
