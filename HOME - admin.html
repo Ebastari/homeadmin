@@ -3,263 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montana AI - Smart Reclamation</title>
+    <title>Montana AI - Secure Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #27ae60;
-            --primary-hover: #219150;
-            --bg-color: #f0f2f5;
-            --text-main: #1c1e21;
-            --text-muted: #606770;
-            --card-bg: #ffffff;
-        }
+        :root { --primary-color: #27ae60; --bg-color: #f0f2f5; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 420px; text-align: center; }
+        input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1.5px solid #e1e4e8; border-radius: 8px; box-sizing: border-box; }
+        .policy-box { background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 0.85rem; text-align: left; margin-bottom: 15px; border: 1px solid #edf2f7; }
+        
+        #camera-container { display: none; margin-top: 15px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); background: #000; position: relative; }
+        video { width: 100%; display: block; transform: scaleX(-1); }
+        .face-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px dashed rgba(255,255,255,0.5); border-radius: 50%; width: 180px; height: 220px; pointer-events: none; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            color: var(--text-main);
-        }
-
-        .container {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        h2 {
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #2d3436;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 16px;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 1.5px solid #e1e4e8;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
-        }
-
-        .policy-box {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            border: 1px solid #edf2f7;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            cursor: pointer;
-            margin-top: 12px;
-            text-align: left;
-        }
-
-        .checkbox-group input {
-            width: auto;
-            margin-top: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        button:hover:not(:disabled) {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-
-        /* Welcome Section Styles */
-        .welcome-card h2 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .explore-btn {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 14px 30px;
-            background: #2980b9;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .explore-btn:hover {
-            background: #2471a3;
-        }
-
-        .switch-account {
-            display: block;
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .switch-account:hover {
-            text-decoration: underline;
-        }
-
+        button { width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
         .hidden { display: none; }
+        .step-locked { opacity: 0.5; pointer-events: none; transition: 0.3s; }
+        .step-active { opacity: 1; pointer-events: auto; }
+        #gps-status { color: #27ae60; font-weight: bold; font-size: 0.75rem; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-section">
-        <h2>Montana AI</h2>
-        <p class="subtitle">Sistem Reklamasi & Nursery Cerdas</p>
+        <h2 style="margin-bottom: 5px;">Montana AI</h2>
+        <p style="font-size: 0.9rem; color: #606770; margin-bottom: 20px;">Sistem Verifikasi Reklamasi Cerdas</p>
         
         <form id="registrationForm">
-            <div class="form-group">
-                <input type="text" id="nama" placeholder="Nama Lengkap" required>
-            </div>
-            <div class="form-group">
-                <input type="tel" id="telepon" placeholder="Nomor Telepon (WhatsApp)" required>
-            </div>
-            <div class="form-group">
-                <input type="email" id="email" placeholder="Email Aktif" required>
-            </div>
+            <input type="text" id="nama" placeholder="Nama Lengkap" required>
+            <input type="tel" id="telepon" placeholder="Nomor WhatsApp" required>
+            <input type="email" id="email" placeholder="Email Aktif" required>
             
             <div class="policy-box">
-                <strong>Informasi Pengembang:</strong><br>
-                Aplikasi ini dikembangkan mandiri oleh <b>Agung Laksono</b>. Mohon gunakan data dan fitur di dalamnya dengan bijak sesuai ketentuan perusahaan.
-                
-                <label class="checkbox-group">
-                    <input type="checkbox" id="agree-checkbox">
-                    <span>Saya setuju dengan kebijakan privasi dan penggunaan data Montana AI.</span>
+                <strong>1. Kebijakan & Ketentuan Penggunaan</strong><br>
+                <p style="margin: 5px 0; line-height: 1.4; color: #2c3e50;">
+                    Montana AI dikembangkan secara mandiri oleh <b>Agung Laksono</b> menggunakan dana pribadi. 
+                    Mengingat biaya operasional (token AI) yang cukup tinggi, mohon gunakan aplikasi ini secara bijak dan bertanggung jawab.
+                </p>
+                <label style="display: flex; gap: 10px; margin-top: 10px; cursor: pointer; font-weight: 600;">
+                    <input type="checkbox" id="privacy-check"> <span> mengakses lokasi saya</span>
                 </label>
+                <span id="gps-status"></span>
+            </div>
+
+            <div id="face-step" class="policy-box step-locked">
+                <strong>2. Verifikasi Wajah</strong><br>
+                <small>Pastikan wajah terlihat jelas untuk otentikasi data.</small>
+                <label style="display: flex; gap: 10px; margin-top: 8px; cursor: pointer;">
+                    <input type="checkbox" id="face-check"> <span>Aktifkan Kamera Depan</span>
+                </label>
+                
+                <div id="camera-container">
+                    <video id="video" autoplay playsinline></video>
+                    <div class="face-overlay"></div>
+                </div>
             </div>
             
-            <button type="submit" id="submitBtn" disabled>Masuk & Setuju</button>
+            <button type="submit" id="submitBtn" disabled>Kirim & Sinkronisasi</button>
         </form>
     </div>
 
-    <div id="welcome-section" class="hidden welcome-card">
+    <div id="welcome-section" class="hidden">
         <h2 id="greeting"></h2>
-        <p>Kami sudah lama menunggu kamu kembali. Mari lanjutkan pemantauan reklamasi Anda hari ini.</p>
-        
-        <a href="https://ebastari.github.io/Homemontanaai/halaman%20home.html" class="explore-btn">Explore Montana AI</a>
-        
-        <a class="switch-account" onclick="logout()">Ganti Akun</a>
+        <p>Akses Montana AI telah diaktifkan. Silakan lanjutkan ke dashboard utama Anda.</p>
+        <a href="https://ebastari.github.io/Homemontanaai/halaman%20home.html" style="display:inline-block; margin-top:20px; padding:12px 25px; background:#2980b9; color:white; text-decoration:none; border-radius:8px; font-weight:bold;">Explore Montana AI</a>
+        <br><br>
+        <small onclick="logout()" style="cursor:pointer; text-decoration:underline; color:#95a5a6;">Ganti Akun</small>
     </div>
 </div>
 
+<canvas id="canvas" class="hidden"></canvas>
+
 <script>
-    // URL Web App Apps Script Anda
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyjnzwGNWTqjVy4cdlwto1bxEMVQ9i36rvjho6n-7WuuK34uoz7_NKfX8xTeSJiEExg0A/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw04sh_xYNc1Q0BjjjqmlX00jLFsMndRdXsWHvUz6nc-cIfe4PbvDc6Thx0qxNJp9wB0w/exec';
     
-    const loginSection = document.getElementById('login-section');
-    const welcomeSection = document.getElementById('welcome-section');
-    const agreeCheckbox = document.getElementById('agree-checkbox');
+    const privacyCheck = document.getElementById('privacy-check');
+    const faceStep = document.getElementById('face-step');
+    const faceCheck = document.getElementById('face-check');
+    const cameraContainer = document.getElementById('camera-container');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
     const submitBtn = document.getElementById('submitBtn');
+    const gpsStatus = document.getElementById('gps-status');
 
-    // Validasi tombol berdasarkan checkbox
-    agreeCheckbox.addEventListener('change', function() {
-        submitBtn.disabled = !this.checked;
-    });
+    let stream = null;
+    let lat = null, lon = null, acc = null;
 
-    // Cek memori HP (Local Storage)
     window.onload = () => {
         const savedName = localStorage.getItem('montanaUser');
-        if (savedName) {
-            showWelcome(savedName);
-        }
+        if (savedName) showWelcome(savedName);
     };
 
     function showWelcome(name) {
-        loginSection.classList.add('hidden');
-        welcomeSection.classList.remove('hidden');
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('welcome-section').classList.remove('hidden');
         document.getElementById('greeting').innerText = `Hai ${name}, Selamat Datang Kembali!`;
     }
 
-    document.getElementById('registrationForm').addEventListener('submit', e => {
+    // ALUR 1: PRIVASI & GPS
+    privacyCheck.addEventListener('change', function() {
+        if (this.checked) {
+            gpsStatus.innerText = "📍 Sedang mengunci lokasi...";
+            navigator.geolocation.getCurrentPosition((pos) => {
+                lat = pos.coords.latitude;
+                lon = pos.coords.longitude;
+                acc = Math.round(pos.coords.accuracy);
+                gpsStatus.innerText = "📍 Lokasi Berhasil Diverifikasi"; // Angka meter dihilangkan
+                faceStep.classList.replace('step-locked', 'step-active');
+            }, (err) => {
+                alert("GPS wajib aktif untuk menggunakan aplikasi ini.");
+                this.checked = false;
+                gpsStatus.innerText = "";
+            }, { enableHighAccuracy: true });
+        } else {
+            faceStep.classList.replace('step-active', 'step-locked');
+            faceCheck.checked = false;
+            stopCamera();
+        }
+    });
+
+    // ALUR 2: KAMERA
+    faceCheck.addEventListener('change', async function() {
+        if (this.checked) {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                video.srcObject = stream;
+                cameraContainer.style.display = 'block';
+                submitBtn.disabled = false;
+            } catch (err) {
+                alert("Izin kamera diperlukan.");
+                this.checked = false;
+            }
+        } else {
+            stopCamera();
+            submitBtn.disabled = true;
+        }
+    });
+
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            cameraContainer.style.display = 'none';
+        }
+    }
+
+    // SUBMIT
+    document.getElementById('registrationForm').addEventListener('submit', async e => {
         e.preventDefault();
         submitBtn.disabled = true;
-        submitBtn.innerText = 'Menyimpan Data...';
+        submitBtn.innerText = 'Menghubungkan ke Server...';
 
-        const data = {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const imageData = canvas.toDataURL('image/jpeg', 0.6);
+
+        const payload = {
             nama: document.getElementById('nama').value,
             telepon: document.getElementById('telepon').value,
-            email: document.getElementById('email').value
+            email: document.getElementById('email').value,
+            lat: lat,
+            lon: lon,
+            acc: acc,
+            image: imageData
         };
 
-        fetch(scriptURL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: JSON.stringify(data) 
-        })
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
         .then(() => {
-            localStorage.setItem('montanaUser', data.nama);
-            showWelcome(data.nama);
+            localStorage.setItem('montanaUser', payload.nama);
+            stopCamera();
+            showWelcome(payload.nama);
         })
-        .catch(error => {
-            alert('Terjadi kesalahan koneksi.');
+        .catch(() => {
+            alert("Gagal Sinkronisasi. Coba lagi.");
             submitBtn.disabled = false;
-            submitBtn.innerText = 'Masuk & Setuju';
         });
     });
 
     function logout() {
-        if(confirm("Keluar dari akun ini?")) {
+        if(confirm("Keluar dari sistem dan ganti akun?")) {
             localStorage.removeItem('montanaUser');
             location.reload();
         }
     }
 </script>
-
 </body>
 </html>
