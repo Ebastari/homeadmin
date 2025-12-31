@@ -3,1085 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Manajemen Integrated Nursery - Modern</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Montana AI - Smart Reclamation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ===================================== */
-        /* 0. Root Variables            */
-        /* ===================================== */
         :root {
-            --primary-green: #4CAF50; /* Base green */
-            --dark-green: #388E3C; /* Darker green */
-            --light-green: #E8F5E9; /* Lighter green */
-            --text-dark: #333333;
-            --text-light: #666666;
-            --background-light: #F8F8F8;
-            --card-background: #FFFFFF;
-            --border-color: #EEEEEE;
-            --shadow-light: rgba(0, 0, 0, 0.08); /* Sedikit lebih gelap */
-            --shadow-medium: rgba(0, 0, 0, 0.15); /* Lebih jelas */
-            --accent-green: #66BB6A; /* Green aksen untuk gradien */
+            --primary-color: #27ae60;
+            --primary-hover: #219150;
+            --bg-color: #f0f2f5;
+            --text-main: #1c1e21;
+            --text-muted: #606770;
+            --card-bg: #ffffff;
         }
 
-        /* ===================================== */
-        /* 1. General Styles            */
-        /* ===================================== */
         body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, var(--primary-green) 0%, #38A057 100%);
-            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-main);
         }
 
-        .app-container {
-            background-color: var(--background-light);
+        .container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 1100px; /* <-- DIUBAH UNTUK DESKTOP */
-            border-radius: 28px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 15px 40px var(--shadow-medium);
-            position: relative;
-            min-height: 90vh;
+            max-width: 420px;
+            text-align: center;
+            transition: transform 0.3s ease;
         }
 
-        /* ===================================== */
-        /* 2. Header Section            */
-        /* ===================================== */
-        .header-bg {
-            background: linear-gradient(100deg, var(--dark-green), var(--accent-green));
-            color: white;
-            padding: 25px 20px 80px 20px;
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            text-decoration: none;
-            display: block;
-            transition: opacity 0.3s ease;
-        }
-        .header-bg:active, .header-bg:hover {
-            opacity: 0.95;
+        h2 {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2d3436;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #e1e4e8;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .policy-box {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-muted);
             margin-bottom: 20px;
-            font-weight: 300;
+            border: 1px solid #edf2f7;
         }
 
-        .location-weather {
+        .checkbox-group {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            margin-top: 12px;
+            text-align: left;
         }
 
-        .location-weather span {
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            opacity: 0.9;
+        .checkbox-group input {
+            width: auto;
+            margin-top: 4px;
         }
 
-        .location-weather i {
-            margin-right: 6px;
-            font-size: 1.1em;
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        button:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* Welcome Section Styles */
+        .welcome-card h2 {
+            color: var(--primary-color);
             margin-bottom: 15px;
         }
 
-        .profile-photo {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid rgba(255,255,255,0.8);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
-
-        .profile-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .profile-info h2 {
-            margin: 0;
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .greeting h1 {
-            margin: 0;
-            font-size: 1.8em;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .greeting p {
-            margin: 8px 0 0;
-            font-size: 1em;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        /* ===================================== */
-        /* 3. Main Content            */
-        /* ===================================== */
-        .main-content-scroll {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 0 20px 20px 20px;
-            position: relative;
-            z-index: 2;
-            margin-top: -60px;
-            background-color: transparent;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-green) var(--background-light);
-        }
-
-        .main-content-scroll::-webkit-scrollbar { width: 8px; }
-        .main-content-scroll::-webkit-scrollbar-track { background: var(--background-light); border-radius: 10px; }
-        .main-content-scroll::-webkit-scrollbar-thumb { background-color: var(--primary-green); border-radius: 10px; border: 2px solid var(--background-light); }
-
-        .section-title {
-            font-size: 1.4em;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-        }
-
-        /* ===================================== */
-        /* 4. Card Styles               */
-        /* ===================================== */
-        .plant-card, .points-card {
-            background-color: var(--card-background);
-            border-radius: 18px;
-            box-shadow: 0 8px 20px var(--shadow-light);
-            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
-        }
-        .plant-card:hover, .points-card:hover {
-            transform: translateY(-7px) scale(1.01);
-            box-shadow: 0 12px 30px var(--shadow-medium);
-        }
-        .plant-card:active, .points-card:active {
-            transform: translateY(-2px) scale(0.99);
-        }
-
-        .plant-cards-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-            margin-top: 10px;
-        }
-
-        .plant-card {
-            padding: 20px;
-            width: 100%;
-            max-width: 320px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-            color: var(--text-dark);
-        }
-
-        .plant-card .icon {
-            font-size: 2.5em;
-            color: white;
-            background: linear-gradient(45deg, #8BC34A, var(--primary-green));
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .plant-card-info h3 {
-            margin: 0;
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-        .plant-card-info p {
-            margin: 5px 0 0;
-            font-size: 0.9em;
-            color: var(--text-light);
-        }
-        .plant-card .arrow {
-            margin-left: auto;
-            color: var(--text-light);
-            font-size: 1.1em;
-            opacity: 0.7;
-        }
-
-        .points-card {
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .points-card .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .points-card .level-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .points-card .level-info span {
-            font-weight: 500;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-        }
-
-        .points-card .level-icon {
-            font-size: 1.2em;
-            line-height: 1;
-            margin-left: 5px;
-        }
-
-        .points-card .time-info {
-            text-align: right;
-            font-size: 0.9em;
-        }
-        .points-card .time-info #liveTime {
-            font-weight: 600;
-            color: #2E7D32;
-            font-size: 1em;
-        }
-        .points-card .time-info small {
-            color: var(--text-light);
-            font-size: 0.8em;
-        }
-
-        .points-card #levelDesc {
-            color: #388E3C;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .points-card .details-btn {
-            background-color: var(--light-green);
-            color: var(--dark-green);
-            padding: 8px 15px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 0.85em;
-            font-weight: 600;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-            align-self: flex-end;
-            margin-top: 12px;
-        }
-        .points-card .details-btn:hover {
-            background-color: var(--primary-green);
-            color: white;
-            transform: scale(1.02);
-        }
-        .points-card .details-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* ===================================== */
-        /* 5. Features Grid             */
-        /* ===================================== */
-        .features-grid {
-            display: grid;
-            /* DIUBAH untuk desktop: auto-fit kolom */
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .feature-item {
-            background-color: var(--card-background);
-            border-radius: 18px;
-            padding: 18px 10px;
-            text-align: center;
-            box-shadow: 0 4px 10px var(--shadow-light);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-dark);
-            position: relative;
-            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
-        }
-        .feature-item:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 8px 20px var(--shadow-medium);
-        }
-        .feature-item:active {
-            transform: translateY(-1px) scale(0.98);
-        }
-
-        .feature-item .icon {
-            font-size: 2.3em;
-            color: var(--dark-green);
-            margin-bottom: 10px;
-            transition: color 0.2s ease;
-        }
-
-        .feature-item span {
-            font-size: 0.85em;
-            font-weight: 500;
-            line-height: 1.3;
-        }
-
-        .badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #FF5722;
-            color: white;
-            font-size: 0.6em;
-            padding: 4px 7px;
-            border-radius: 8px;
-            font-weight: 700;
-        }
-        .badge.beta {
-            background-color: #8BC34A;
-        }
-
-        /* ===================================== */
-        /* 6. Bottom Navigation         */
-        /* ===================================== */
-        .bottom-nav {
-            background-color: rgba(255, 255, 255, 0.9);
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
-            padding: 12px 0;
-            display: flex;
-            justify-content: space-around;
-            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            bottom: 0;
-            width: 100%;
-            border-top-left-radius: 28px;
-            border-top-right-radius: 28px;
-            z-index: 10;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-light);
-            font-size: 0.75em;
-            padding: 8px 5px;
-            flex: 1;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-item.active {
-            color: var(--primary-green);
-            font-weight: 600;
-        }
-        .nav-item:hover {
-            color: var(--primary-green);
-            transform: translateY(-2px);
-        }
-
-        .nav-item i {
-            font-size: 1.6em;
-            margin-bottom: 5px;
-            transition: transform 0.2s ease-out;
-        }
-
-        .nav-item.active i {
-            transform: scale(1.2) translateY(-2px);
-        }
-
-        /* ===================================== */
-        /* 7. Modals                    */
-        /* ===================================== */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .close-button {
-            position: absolute;
-            right: 20px;
-            top: 10px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .btn-upload {
+        .explore-btn {
             display: inline-block;
-            background: linear-gradient(90deg,#1e8b4b,#0b6b3a);
+            margin-top: 25px;
+            padding: 14px 30px;
+            background: #2980b9;
             color: white;
-            padding: 8px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .btn-save {
-            background: linear-gradient(90deg,#0b6b3a,#1e8b4b);
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+            text-decoration: none;
+            border-radius: 8px;
             font-weight: 600;
+            transition: background 0.2s;
         }
 
-        .file-input input[type=file] {
-            display: none;
+        .explore-btn:hover {
+            background: #2471a3;
         }
 
-        /* ===================================== */
-        /* 8. Animations                */
-        /* ===================================== */
-        @keyframes sparkle {
-            0% { transform: scale(1); opacity: 0.9; box-shadow:0 0 10px 3px rgba(76,175,80,0.4); }
-            50% { transform: scale(1.3); opacity: 1; box-shadow:0 0 15px 5px rgba(129,199,132,0.6); }
-            100% { transform: scale(1); opacity: 0.9; box-shadow:0 0 10px 3px rgba(76,175,80,0.4); }
+        .switch-account {
+            display: block;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
         }
 
-        /* ===================================== */
-        /* 9. Responsive Adjustments        */
-        /* ===================================== */
-        /* Ini adalah aturan untuk HP (layar kecil) */
-        @media (max-width: 480px) {
-            body { padding: 0; } /* Ubah padding body jadi 0 di HP */
-            .app-container { 
-                margin: 0; 
-                border-radius: 0; /* Hilangkan radius di HP agar full-screen */
-                min-height: 100vh; 
-                padding: 0; /* Hapus padding jika ada */
-                box-shadow: none; /* Hilangkan shadow di HP */
-            }
-            .header-bg, .bottom-nav { border-radius: 0; }
-            .header-bg { padding: 20px 15px 70px 15px; }
-            .greeting h1 { font-size: 1.6em; }
-            .greeting p { font-size: 0.9em; }
-            .main-content-scroll { padding: 0 15px 15px 15px; margin-top: -50px; }
-            .plant-card { padding: 15px; gap: 10px; max-width: none; }
-            .plant-card .icon { width: 50px; height: 50px; font-size: 2.2em; }
-            .plant-card-info h3 { font-size: 1.1em; }
-            .plant-card-info p { font-size: 0.8em; }
-            .points-card { padding: 15px; }
-            .points-card .details-btn { padding: 8px 15px; font-size: 0.8em; }
-            .section-title { font-size: 1.2em; margin-bottom: 15px; }
-            
-            .features-grid { 
-                gap: 10px; 
-                grid-template-columns: repeat(3, 1fr); /* DITAMBAHKAN: Paksa 3 kolom di HP */
-            }
-            
-            .feature-item { padding: 15px 8px; border-radius: 15px; }
-            .feature-item .icon { font-size: 2em; margin-bottom: 8px; }
-            .feature-item span { font-size: 0.8em; }
-            .bottom-nav { padding: 8px 0; }
-            .nav-item i { font-size: 1.4em; }
-            .nav-item span { font-size: 0.65em; }
+        .switch-account:hover {
+            text-decoration: underline;
         }
 
-        /* ======= tambahan UI untuk keaktifan anggota (sesuai gaya kamu) ======= */
-        .members-wrapper {
-            background: var(--card-background);
-            border-radius: 18px;
-            padding: 14px 14px 6px 14px;
-            box-shadow: 0 8px 20px var(--shadow-light);
-            margin-bottom: 25px;
-        }
-        .members-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-        }
-        .members-subtitle { color: var(--text-light); font-size: .9em; }
-        .members-row {
-            display: flex; gap: 12px; overflow-x: auto; padding: 8px 2px 2px 2px; scrollbar-width: thin;
-        }
-        .member-tile {
-            min-width: 78px; width: 78px; text-align: center; cursor: pointer;
-        }
-        .member-tile img {
-            width: 78px; height: 78px; border-radius: 50%; object-fit: cover;
-            border: 3px solid rgba(0,0,0,.06);
-        }
-        .member-name { font-size: .8em; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .rank-badge { margin-top: 2px; color: var(--dark-green); font-weight: 700; font-size: .75em; }
-        .progress-bar { height: 10px; background: #eaeaea; border-radius: 10px; overflow: hidden; margin-top: 6px; }
-        .progress-inner { height: 100%; width: 0%; background: linear-gradient(90deg, #8BC34A, var(--primary-green)); }
-        @media (max-width:480px){
-            .member-tile { min-width: 66px; width: 66px; }
-            .member-tile img { width: 66px; height: 66px; }
-        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="app-container">
 
-    <div class="header-bg">
-        <div class="header-top">
-            <div class="location-weather">
-                <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span id="currentLocation">Lokasi Anda</span></span>
-                <a href="https://www.msn.com/id-id/cuaca/prakiraan/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsImMiOiJJbmRvbmVzaWEiLCJpIjoiSUQiLCJ0IjoxMDIsImciOiJpZC1pZCIsIngiOiIxMTUuMTQ0IiwieSI6Ii0yLjkzMzYifQ%3D%3D&weadegreetype=C&cvid=04f8efd46fc4e61c726ce185e11fa39" aria-label="Lihat perkiraan cuaca di Rantau, Kalimantan Selatan" style="color: inherit; text-decoration: none;">
-                </a>
+<div class="container">
+    <div id="login-section">
+        <h2>Montana AI</h2>
+        <p class="subtitle">Sistem Reklamasi & Nursery Cerdas</p>
+        
+        <form id="registrationForm">
+            <div class="form-group">
+                <input type="text" id="nama" placeholder="Nama Lengkap" required>
             </div>
-            <!-- Live clock ditempel via JS -->
-        </div>
-        <div class="greeting">
-            <div class="profile-header">
-                <div class="profile-photo" id="avatarContainer" role="button" tabindex="0" aria-label="Edit profil pengguna">
-                    <img id="avatarImage" src="https://via.placeholder.com/80/28a745/ffffff?text=NP" alt="Foto Profil Pengguna">
-                </div>
-                <div class="profile-info">
-                    <h2 id="userNameDisplay">Nama Pengguna</h2>
-                </div>
+            <div class="form-group">
+                <input type="tel" id="telepon" placeholder="Nomor Telepon (WhatsApp)" required>
             </div>
-            <h1>Halo, <span id="greetingName">Sahabat Montana</span>!</h1>
-            <p>Bayangkan jika kamu memiliki asisten analisis data canggih yang mampu melaporkan kondisi tanaman secara real-time, melakukan pendataan bibit otomatis, mendeteksi kesehatan daun, mengukur tinggi tanaman secara otomatis, dan bahkan menyediakan laporan melalui chatbot AI — semuanya terintegrasi dalam satu aplikasi: “Montana AI: Artificial Intelligence for Smart Land Reclamation.”</p>
-        </div>
-    </div>
-    
-    <div id="editProfileModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="editProfileModalTitle">
-            <div class="modal-content">
-                <span class="close-button" id="closeEditModal" role="button" tabindex="0" aria-label="Tutup dialog edit profil">&times;</span>
-                <h2 id="editProfileModalTitle">Edit Profil Pengguna</h2>
-                <form id="profileForm">
-                    <label for="profileName">Nama Lengkap</label>
-                    <input type="text" id="profileName" placeholder="Nama Anda" aria-label="Input nama lengkap" style="width:100%;padding:8px;border:1px solid #eee;border-radius:8px">
-
-                    <label for="profilePhotoInput" style="display:block;margin-top:10px">Foto Profil</label>
-                    <div class="file-input">
-                        <label class="btn-upload" for="profilePhotoInput">Pilih Foto</label>
-                        <input type="file" id="profilePhotoInput" accept="image/*" aria-label="Pilih foto profil dari perangkat Anda">
-                    </div>
-
-                    <div class="actions" style="margin-top:10px">
-                        <button type="button" class="btn-save" id="saveProfile">Simpan</button>
-                    </div>
-                </form>
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email Aktif" required>
             </div>
-        </div>
-
-        <div class="main-content-scroll">
-            <div class="points-card">
-                <h3 style="margin:0; font-weight:700; color:#2E7D32;">Status Pertumbuhan</h3>
-                <hr style="border:none; border-top:1px solid #E0E0E0; margin:8px 0;">
-
-                <div style="width:100%;">
-                    <p style="margin:6px 0;"><strong>Tingkatan Saat Ini:</strong> <span id="currentLevel">Semai</span></p>
-                    <p style="margin:6px 0;"><strong>Waktu Aktif:</strong> <span id="liveTime">0h 0j 0m 0d</span></p>
-
-                    <div style="margin-top:18px;">
-                        <div style="height:6px; background:#E0E0E0; border-radius:3px; position:relative;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress pertumbuhan tanaman">
-                            <div id="levelMarker"
-                                 style="position:absolute; top:-4px; width:14px; height:14px; border-radius:50%;
-                                        background:radial-gradient(circle, #66BB6A 0%, #43A047 60%, transparent 70%);
-                                        box-shadow:0 0 10px 3px rgba(76, 175, 80, 0.4);
-                                        animation:sparkle 1.2s infinite ease-in-out;">
-                            </div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.8em; color:#555;">
-                            <span>Semai</span><span>Pancang</span><span>Tiang</span><span>Pohon</span><span>Rimba</span>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="https://ebastari.github.io/Poin/Poin.html" class="details-btn" style="align-self:flex-end; margin-top:12px;">
-                    Selengkapnya ➜
-                </a>
+            
+            <div class="policy-box">
+                <strong>Informasi Pengembang:</strong><br>
+                Aplikasi ini dikembangkan mandiri oleh <b>Agung Laksono</b>. Mohon gunakan data dan fitur di dalamnya dengan bijak sesuai ketentuan perusahaan.
+                
+                <label class="checkbox-group">
+                    <input type="checkbox" id="agree-checkbox">
+                    <span>Saya setuju dengan kebijakan privasi dan penggunaan data Montana AI.</span>
+                </label>
             </div>
-
-            <!-- ======= Keaktifan Anggota (baru) – horizontal scroll ala story ======= -->
-            <div class="members-wrapper" id="membersSection">
-                <div class="members-header">
-                    <div>
-                        <strong>Keaktifan Anggota</strong>
-                        <div class="members-subtitle">Klik avatar untuk lihat peringkat & detail</div>
-                    </div>
-                    <button id="refreshMembers" style="background:#fff;border:1px solid #eee;padding:6px 10px;border-radius:8px;cursor:pointer">Refresh</button>
-                </div>
-                <div class="members-row" id="membersRow"></div>
-            </div>
-            <!-- ======= /Keaktifan Anggota ======= -->
-
-            <h2 class="section-title">Menu Utama</h2>
-            <div class="features-grid">
-               <a href="https://ebastari.github.io/allchatbot/ALLCHATBOT.html" class="feature-item" aria-label="ChatBot AI untuk analisis data">
-                    <span class="icon"><i class="fas fa-microchip" aria-hidden="true"></i></span>
-                    <span>Chatbot Fitur Andalan</span>
-                </a>
-                <a href="https://www.arcgis.com/sharing/rest/content/items/e422f795c4774c65af35b034f2255894/data" class="feature-item" aria-label="Download data realisasi penanaman">
-                    <span class="icon"><i class="fas fa-cloud-download-alt" aria-hidden="true"></i></span>
-                    <span>Download Realisasi Penanaman...</span>
-                </a>
-                <a href="https://www.arcgis.com/sharing/rest/content/items/5e253c50a5364155a37390eeac2cc819/data" class="feature-item" aria-label="Download data IPPKH">
-                    <span class="icon"><i class="fas fa-file-download" aria-hidden="true"></i></span>
-                    <span>Download Data IPPKH</span>
-                </a>
-                <a href="https://lookerstudio.google.com/s/oDcbCRPbvm0" class="feature-item" aria-label="Lihat laporan bibit">
-                    <span class="icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Laporan Bibit</span>
-                </a>
-
-                <a href="https://www.msn.com/id-id/cuaca/peta/radar/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsInIyIjoiVGFwaW4iLCJjIjoiSW5kb25lc2lhIiwiaSI6IklEIiwidCI6MTAyLCJnIjoiaWQtaWQiLCJ4IjoiMTE1LjA4OSIsInk6Ii0yLjk0ODkifQ%3D%3D&weadegreetype=C&zoom=13&rcmode=1" class="feature-item" aria-label="Lihat perkiraan cuaca">
-                    <span class="icon"><i class="fas fa-cloud-sun-rain" aria-hidden="true"></i></span>
-                    <span>Perkiraan Cuaca</span>
-                </a>              
-                <a href="https://drive.google.com/file/d/177quXwlMkQusQRSbZboRrNnFSqwNaZhw/view?usp=sharing" class="feature-item" aria-label="Lihat dokumen RR">
-                    <span class="icon"><i class="fas fa-book-open" aria-hidden="true"></i></span>
-                    <span>Dokumen RR</span>
-                </a>    
-                <a href="https://ebastari.github.io/Realisasi-pekerjaan/Realisasi2025.html" class="feature-item" aria-label="Lihat berita acara realisasi">
-                    <span class="icon"><i class="fas fa-newspaper" aria-hidden="true"></i></span>
-                    <span>BERITA ACARA REALISASI 2025</span>
-                </a>
-                <a href="https://www.appsheet.com/start/f912f118-c330-4435-b1f2-2d8834992211" class="feature-item" aria-label="Lihat MOM (Minutes of Meeting)">
-                    <span class="icon"><i class="fas fa-handshake" aria-hidden="true"></i></span>
-                    <span>MOM</span>
-                </a>
-
-                <a href="https://www.appsheet.com/start/c686e2ea-ef8d-47bd-9318-80d81163c0c3" class="feature-item" aria-label="Manajemen Pestisida">
-                    <span class="icon"><i class="fas fa-spray-can" aria-hidden="true"></i></span>
-                    <span>PESTISIDA</span>
-                </a>
-                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item" aria-label="Lihat logbook bibit">
-                    <span class="icon"><i class="fas fa-book" aria-hidden="true"></i></span>
-                    <span>LOGBOOK BIBIT</span>
-                </a>
-                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item" aria-label="Lihat logbook pestisida">
-                    <span class="icon"><i class="fas fa-book-reader" aria-hidden="true"></i></span>
-                    <span>LOGBOOK PESTISIDA</span>
-                </a>
-
-                <a href="https://ebastari.github.io/camera00003/cameraeco.html" class="feature-item" aria-label="Buka aplikasi Montana V2">
-                    <span class="icon"><i class="fas fa-camera" aria-hidden="true"></i></span>
-                    <span>MONTANA V2</span>
-                </a>
-                <a href="https://ebastari.github.io/Tinggi/Tinggi%20Fix.Html" class="feature-item" aria-label="Gunakan pengukur tinggi tanaman">
-                    <span class="icon"><i class="fas fa-arrows-alt-v" aria-hidden="true"></i></span>
-                    <span>Pengukur Tinggi</span></a>
-                <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOMQ7CMBAE_7K1X-ASRIEQNCAaTOHEZ8kisaPYASLLf-cSQNQR5c1pdjfj7uhxTLq-QV7y79rRCImscBo7UpAK6-BTHxoFoXDQ7RuuXOWSQkG5iq-cKELmBa78o1fAGfLJWUf9FDRpHPCR-D0pDGYBRaAdkq4amneyUAozG-ohkjnziKXlces3z057sw-G86xuIpUXf0AzE1YBAAA=&view=Bibit" class="feature-item" aria-label="Akses aplikasi My Maps Appsheet">
-                    <span class="icon"><i class="fas fa-seedling" aria-hidden="true"></i></span>
-                    <span>Form update Bibit</span>
-                </a>
-    
-                <a href="https://ebastari.github.io/Dasboard-Karbon/Karbon" 
-   class="feature-item" 
-   aria-label="Akses aplikasi Montana AI Karbon">
-
-    <span class="icon">
-        <i class="fas fa-smog" aria-hidden="true"></i>
-    </span>
-
-    <span>Montana AI Keberhasilan Serapan Karbon</span>
-</a>
-             </div>
-        </div>
-
-        <div class="bottom-nav">
-            <a href="https://ebastari.github.io/homeadmin/HOME%20-%20admin.html" class="nav-item active" aria-label="Beranda">
-                <i class="fas fa-home" aria-hidden="true"></i>
-                <span>Beranda</span>
-            </a>
-            <a href="https://ebastari.github.io/dasboard-AI/testdas45.html" class="nav-item" aria-label="Lihat informasi bibit">
-                <i class="fas fa-seedling" aria-hidden="true"></i>
-                <span>Bibit</span>
-            </a>
-            <a href="https://ebastari.github.io/mapsmontana/mymaps.html" class="nav-item" aria-label="Akses peta Montana">
-                <i class="fas fa-leaf" aria-hidden="true"></i>
-                <span>Montana</span>
-            </a>
-            <a href="https://ebastari.github.io/notifikasi/notif.html" class="nav-item" aria-label="Lihat notifikasi">
-                <i class="fas fa-bell" aria-hidden="true"></i>
-                <span>Notifikasi</span>
-            </a>
-            <a href="https://ebastari.github.io/Profil/profil2" class="nav-item" aria-label="Lihat profil pengguna">
-                <i class="fas fa-user" aria-hidden="true"></i>
-                <span>Profil</span>
-            </a>
-            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOywrCMBRE_2XW-YLsRIoUHwsVN8ZFbG4h2CalSdUS8u8mVnFdXN5zOTMTcNf0OHhZ3cDP4XetaQRHEDiOHQlwgaU1vreNABPYyXaCq8Wm2JcCEfHCvrYnBx7myPyfZgatyHhda-pzUvZSwsdK7-wkMBmIDO3g5bWh99RkxJhYbavBkTqlGbPrXWmKZyeN2lqVAmvZOIovFtYuNVsBAAA=&view=GALERI" class="nav-item" aria-label="Lihat galeri foto">
-                <i class="fas fa-camera" aria-hidden="true"></i>
-                <span>GALERI</span>
-            </a>
-        </div>
+            
+            <button type="submit" id="submitBtn" disabled>Masuk & Setuju</button>
+        </form>
     </div>
 
-<!-- Modal detail anggota -->
-<div id="memberModal" class="modal" aria-hidden="true">
-  <div class="modal-content" role="dialog" aria-label="Detail anggota">
-    <span class="close-button" id="closeMemberModal">&times;</span>
-    <div id="memberModalBody"></div>
-  </div>
+    <div id="welcome-section" class="hidden welcome-card">
+        <h2 id="greeting"></h2>
+        <p>Kami sudah lama menunggu kamu kembali. Mari lanjutkan pemantauan reklamasi Anda hari ini.</p>
+        
+        <a href="https://ebastari.github.io/Homemontanaai/halaman%20home.html" class="explore-btn">Explore Montana AI</a>
+        
+        <a class="switch-account" onclick="logout()">Ganti Akun</a>
+    </div>
 </div>
 
 <script>
-    /* =========================
-       KONFIGURASI
-    ========================== */
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNlYkihSSD52dsvYzavcNq3EWVwn0OcpL1E8qW6JLl-7IMa2nbJPVsttSJ6ChVsPl1/exec";
-    const PROFILE_KEY = "montana_profile_v1";
-    const MEMBERS_KEY = "montana_members_v1";
-    const LOG_KEY = "montana_activity_log_v1";
+    // URL Web App Apps Script Anda
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyjnzwGNWTqjVy4cdlwto1bxEMVQ9i36rvjho6n-7WuuK34uoz7_NKfX8xTeSJiEExg0A/exec';
+    
+    const loginSection = document.getElementById('login-section');
+    const welcomeSection = document.getElementById('welcome-section');
+    const agreeCheckbox = document.getElementById('agree-checkbox');
+    const submitBtn = document.getElementById('submitBtn');
 
-    // Batas level (detik) — Rimba = 30 hari
-    const LEVEL_THRESHOLDS = {
-      SEMAI: 0,
-      PANCANG: 1 * 86400,   // 1 hari
-      TIANG:   7 * 86400,   // 7 hari
-      POHON:  15 * 86400,   // 15 hari
-      RIMBA:  30 * 86400    // 30 hari
+    // Validasi tombol berdasarkan checkbox
+    agreeCheckbox.addEventListener('change', function() {
+        submitBtn.disabled = !this.checked;
+    });
+
+    // Cek memori HP (Local Storage)
+    window.onload = () => {
+        const savedName = localStorage.getItem('montanaUser');
+        if (savedName) {
+            showWelcome(savedName);
+        }
     };
 
-    /* =========================
-       ELEMEN DOM
-    ========================== */
-    const avatarContainer = document.getElementById("avatarContainer");
-    const avatarImage = document.getElementById("avatarImage");
-    const userNameDisplay = document.getElementById("userNameDisplay");
-    const greetingName = document.getElementById("greetingName");
-    const editProfileModal = document.getElementById("editProfileModal");
-    const closeEditModal = document.getElementById("closeEditModal");
-    const profileNameInput = document.getElementById("profileName");
-    const profilePhotoInput = document.getElementById("profilePhotoInput");
-    const saveProfileBtn = document.getElementById("saveProfile");
-    const levelDisplay = document.getElementById("currentLevel");
-    const timeDisplay = document.getElementById("liveTime");
-    const levelMarker = document.getElementById("levelMarker");
-    const currentLocationSpan = document.getElementById("currentLocation");
-
-    // Keaktifan
-    const membersRow = document.getElementById("membersRow");
-    const refreshMembersBtn = document.getElementById("refreshMembers");
-    const memberModal = document.getElementById("memberModal");
-    const memberModalBody = document.getElementById("memberModalBody");
-    const closeMemberModal = document.getElementById("closeMemberModal");
-
-    /* =========================
-       UTIL
-    ========================== */
-    function uid(){ return 'm'+Math.random().toString(36).slice(2,9); }
-    function formatSeconds(s){
-      if(!s || s <= 0) return "0d 0j 0m 0s";
-      const days = Math.floor(s/86400);
-      s%=86400;
-      const hours = Math.floor(s/3600);
-      s%=3600;
-      const minutes = Math.floor(s/60);
-      const seconds = Math.floor(s%60);
-      // mengikuti gaya tampilan yang sudah ada di file-mu
-      return `${days}h ${hours}j ${minutes}m ${seconds}d`;
-    }
-    function computeLevel(totalSeconds){
-      const pct = Math.min(100, Math.round((totalSeconds/LEVEL_THRESHOLDS.RIMBA)*100));
-      if(totalSeconds >= LEVEL_THRESHOLDS.RIMBA) return { name: "Rimba", percent: 100 };
-      if(totalSeconds >= LEVEL_THRESHOLDS.POHON) return { name: "Pohon", percent: pct };
-      if(totalSeconds >= LEVEL_THRESHOLDS.TIANG) return { name: "Tiang", percent: pct };
-      if(totalSeconds >= LEVEL_THRESHOLDS.PANCANG) return { name: "Pancang", percent: pct };
-      return { name: "Semai", percent: pct };
+    function showWelcome(name) {
+        loginSection.classList.add('hidden');
+        welcomeSection.classList.remove('hidden');
+        document.getElementById('greeting').innerText = `Hai ${name}, Selamat Datang Kembali!`;
     }
 
-    /* =========================
-       PROFIL (localStorage)
-    ========================== */
-    function loadProfile() {
-      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      if (data.name) {
-        userNameDisplay.textContent = data.name;
-        greetingName.textContent = data.name.split(" ")[0] || data.name;
-      }
-      if (data.photo) avatarImage.src = data.photo;
+    document.getElementById('registrationForm').addEventListener('submit', e => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Menyimpan Data...';
 
-      // pastikan ada di daftar anggota
-      if (data.name) {
-        const m = { name: data.name, photo: data.photo || avatarImage.src,
-                    totalSeconds: parseInt(localStorage.getItem("activeSeconds"))||0,
-                    lastSeen: new Date().toISOString() };
-        upsertMember(m);
-      }
-      renderMembers();
-    }
-    function saveProfile() {
-      const name = profileNameInput.value.trim() || "Sahabat Montana";
-      const photo = avatarImage.src;
-      const data = { name, photo };
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
-      // update anggota
-      const m = { name, photo, totalSeconds: parseInt(localStorage.getItem("activeSeconds"))||0,
-                  lastSeen: new Date().toISOString() };
-      upsertMember(m);
-      loadProfile();
-      editProfileModal.style.display = "none";
-      // kirim log
-      sendActivity("Profil diperbarui");
-    }
-
-    profilePhotoInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => { avatarImage.src = reader.result; };
-      reader.readAsDataURL(file);
-    });
-
-    avatarContainer.addEventListener("click", () => {
-      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      profileNameInput.value = data.name || "";
-      editProfileModal.style.display = "flex";
-    });
-    closeEditModal.addEventListener("click", () => editProfileModal.style.display = "none");
-    saveProfileBtn.addEventListener("click", saveProfile);
-
-    document.addEventListener("DOMContentLoaded", loadProfile);
-
-    /* =========================
-       LOKASI + JAM
-    ========================== */
-    function getCurrentLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          currentLocationSpan.textContent = ` (Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)})`;
-        }, error => {
-          console.error("Error getting location: ", error);
-          currentLocationSpan.textContent = "Lokasi tidak tersedia";
-        });
-      } else {
-        currentLocationSpan.textContent = "Geolocation tidak didukung";
-      }
-    }
-    function startLiveClock(){
-      const clockElement = document.createElement("div");
-      clockElement.id = "liveClock";
-      clockElement.style.position="absolute";
-      clockElement.style.top="16px";
-      clockElement.style.right="18px";
-      clockElement.style.fontSize="0.9em";
-      clockElement.style.fontWeight="600";
-      clockElement.style.color="rgba(255,255,255,0.95)";
-      document.querySelector(".header-bg").appendChild(clockElement);
-      setInterval(()=> {
-        clockElement.textContent = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-      }, 1000);
-    }
-
-    /* =========================
-       AKTIVITAS & LEVEL
-    ========================== */
-    let totalSeconds = parseInt(localStorage.getItem("activeSeconds")) || 0;
-
-    setInterval(() => {
-      totalSeconds++;
-      localStorage.setItem("activeSeconds", totalSeconds);
-
-      // Hitung waktu aktif
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-      // tetap mengikuti format tampilan yg sudah ada
-      timeDisplay.textContent = `${days}h ${hours}j ${minutes}m ${seconds}d`;
-
-      // Tentukan level berdasarkan 30 Hari (Rimba)
-      const lvl = computeLevel(totalSeconds);
-      levelDisplay.textContent = lvl.name;
-      levelMarker.style.left = `calc(${lvl.percent}% - 7px)`;
-
-      // update diri sendiri di daftar anggota
-      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      if (data.name) {
-        upsertMember({ name: data.name, photo: data.photo || avatarImage.src,
-                       totalSeconds: totalSeconds, lastSeen: new Date().toISOString() });
-      }
-    }, 1000);
-
-    // Simpan & kirim berkala tiap 2 menit
-    setInterval(() => {
-      const data = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      if (data.name) {
-        // render ulang leaderboard
-        renderMembers();
-        // kirim log aktivitas
-        sendActivity("Aktif");
-      }
-    }, 120000);
-
-    /* =========================
-       LEADERBOARD ANGGOTA (horizontal)
-    ========================== */
-    function loadMembers(){ try { const arr = JSON.parse(localStorage.getItem(MEMBERS_KEY) || "[]"); return Array.isArray(arr)?arr:[]; } catch(e){ return []; } }
-    function saveMembers(arr){ localStorage.setItem(MEMBERS_KEY, JSON.stringify(arr)); }
-    function upsertMember(obj){
-      const arr = loadMembers();
-      let found = arr.find(m => (m.id && obj.id && m.id===obj.id) || (obj.name && m.name===obj.name));
-      if(found){
-        found.name = obj.name || found.name;
-        found.photo = obj.photo || found.photo;
-        if (typeof obj.totalSeconds === "number") found.totalSeconds = obj.totalSeconds;
-        found.lastSeen = obj.lastSeen || found.lastSeen || new Date().toISOString();
-      } else {
-        obj.id = obj.id || uid();
-        obj.totalSeconds = obj.totalSeconds || 0;
-        obj.lastSeen = obj.lastSeen || new Date().toISOString();
-        arr.push(obj);
-      }
-      saveMembers(arr);
-    }
-    function getRank(id){
-      const arr = loadMembers().slice().sort((a,b)=> (b.totalSeconds||0) - (a.totalSeconds||0));
-      const i = arr.findIndex(x=> x.id===id || false);
-      if (i >= 0) return i+1;
-      // jika tak ketemu rank via id, coba by name unik
-      return '-';
-    }
-    function renderMembers(){
-      const arr = loadMembers().slice().sort((a,b)=> (b.totalSeconds||0) - (a.totalSeconds||0));
-      membersRow.innerHTML = "";
-      if(arr.length===0){
-        membersRow.innerHTML = '<div style="padding:8px;color:#777">Belum ada anggota tercatat. Simpan profil terlebih dahulu.</div>';
-        return;
-      }
-      arr.forEach((m, idx) => {
-        const level = computeLevel(m.totalSeconds||0);
-        const tile = document.createElement("div");
-        tile.className = "member-tile";
-        tile.setAttribute("data-id", m.id || "");
-        tile.innerHTML = `
-          <img src="${m.photo || 'https://via.placeholder.com/80/28a745/ffffff?text=NP'}" alt="${m.name}">
-          <div class="member-name" title="${m.name}">${m.name}</div>
-          <div class="rank-badge">#${idx+1} • ${level.name}</div>
-          <div class="progress-bar"><div class="progress-inner" style="width:${level.percent}%"></div></div>
-        `;
-        tile.addEventListener("click", ()=> openMemberModal(m));
-        membersRow.appendChild(tile);
-      });
-    }
-    function openMemberModal(m){
-      const level = computeLevel(m.totalSeconds||0);
-      memberModalBody.innerHTML = `
-        <div style="display:flex;gap:12px;align-items:center">
-          <img src="${m.photo || 'https://via.placeholder.com/120/28a745/ffffff?text=NP'}" alt="${m.name}" style="width:90px;height:90px;border-radius:50%;object-fit:cover">
-          <div style="flex:1">
-            <h3 style="margin:0">${m.name}</h3>
-            <div style="color:#666;margin-top:6px">Level: <strong>${level.name}</strong></div>
-            <div style="color:#666;margin-top:4px">Total Aktif: <strong>${formatSeconds(m.totalSeconds||0)}</strong></div>
-          </div>
-        </div>
-        <div style="margin-top:12px">
-          <div class="progress-bar"><div class="progress-inner" style="width:${level.percent}%"></div></div>
-          <div style="color:#666;margin-top:6px">Menuju Rimba (30 hari): <strong>${level.percent}%</strong></div>
-          <div style="color:#666;margin-top:8px">Terakhir terlihat: ${m.lastSeen ? new Date(m.lastSeen).toLocaleString('id-ID') : '-'}</div>
-        </div>
-      `;
-      memberModal.style.display = "flex";
-    }
-    closeMemberModal.addEventListener("click", ()=> memberModal.style.display = "none");
-    memberModal.addEventListener("click", (e)=> { if(e.target===memberModal) memberModal.style.display = "none"; });
-    refreshMembersBtn.addEventListener("click", renderMembers);
-
-    /* =========================
-       KIRIM AKTIVITAS KE SPREADSHEET
-    ========================== */
-    function sendActivity(status){
-      try{
-        const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-        const name = profile.name || "Tanpa Nama";
-        const photo = profile.photo || avatarImage.src;
-        const locText = (currentLocationSpan.textContent || "").trim();
-        const durMinutes = ((parseInt(localStorage.getItem("activeSeconds"))||0) / 60).toFixed(1);
-
-        const payload = {
-          nama: name,
-          foto: photo,
-          lokasi: locText,
-          durasi: durMinutes,
-          status: status,
-          device: navigator.userAgent
+        const data = {
+            nama: document.getElementById('nama').value,
+            telepon: document.getElementById('telepon').value,
+            email: document.getElementById('email').value
         };
 
-        // no-cors: supaya request tetap terkirim tanpa error CORS
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+        fetch(scriptURL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify(data) 
+        })
+        .then(() => {
+            localStorage.setItem('montanaUser', data.nama);
+            showWelcome(data.nama);
+        })
+        .catch(error => {
+            alert('Terjadi kesalahan koneksi.');
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Masuk & Setuju';
         });
-
-        // log lokal
-        const logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]" );
-        logs.push({ waktu: new Date().toLocaleString("id-ID", {timeZone:"Asia/Jakarta"}), status, nama: name, durasi: durMinutes });
-        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
-      } catch(e){
-        console.error("sendActivity error:", e);
-      }
-    }
-
-    /* =========================
-       STARTUP HOOKS
-    ========================== */
-    function init(){
-      getCurrentLocation();
-      startLiveClock();
-      renderMembers();
-      sendActivity("Online");
-    }
-    window.addEventListener("load", init);
-    window.addEventListener("beforeunload", ()=>{
-      const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
-      if(profile.name){
-        // update lastSeen & simpan menit terakhir
-        upsertMember({ name: profile.name, photo: profile.photo || avatarImage.src,
-                       totalSeconds: parseInt(localStorage.getItem("activeSeconds"))||0,
-                       lastSeen: new Date().toISOString() });
-        sendActivity("Selesai");
-      }
     });
+
+    function logout() {
+        if(confirm("Keluar dari akun ini?")) {
+            localStorage.removeItem('montanaUser');
+            location.reload();
+        }
+    }
 </script>
+
 </body>
 </html>
